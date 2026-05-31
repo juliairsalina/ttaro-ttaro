@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>따로따로 · Taro — AI Expense Coordination</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- Prototype Banner -->
+<div id="prototype-banner">
+  <span>⚠ Prototype · Demo data only · No real payments processed</span>
+  <button class="banner-dismiss" onclick="document.getElementById('prototype-banner').style.display='none'">✕</button>
+</div>
+
+<div id="app">
+
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div class="sidebar-logo">
+      <svg width="40" height="40" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="24" cy="32" rx="15" ry="11" fill="#C9B8E8" stroke="#7C5CBF" stroke-width="1.5"/>
+        <circle cx="24" cy="21" r="13" fill="#EDE8F8" stroke="#7C5CBF" stroke-width="1.5"/>
+        <circle cx="19.5" cy="20" r="2.5" fill="#5B3FAF"/>
+        <circle cx="28.5" cy="20" r="2.5" fill="#5B3FAF"/>
+        <circle cx="20.3" cy="19.2" r="0.8" fill="white"/>
+        <circle cx="29.3" cy="19.2" r="0.8" fill="white"/>
+        <path d="M 19 25.5 Q 24 29 29 25.5" stroke="#7C5CBF" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <path d="M 24 8 C 17 4 11 11 17 16 C 19.5 11 24 8 24 8 Z" fill="#B8A0E0"/>
+        <path d="M 24 8 C 31 4 37 11 31 16 C 28.5 11 24 8 24 8 Z" fill="#9B7DD4"/>
+        <line x1="24" y1="8" x2="24" y2="16" stroke="#7C5CBF" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <div class="logo-text">
+        <span class="logo-name">따로따로</span>
+        <span class="logo-sub">Taro · AI Expenses</span>
+      </div>
+    </div>
+
+    <div class="sidebar-user-card">
+      <div class="avatar av-julia">J</div>
+      <div class="user-info">
+        <div class="user-name">Julia</div>
+        <div class="user-balance">Balance: <span id="sidebar-balance">₩120,000</span></div>
+      </div>
+    </div>
+
+    <ul class="nav-list">
+      <li class="nav-item active" data-screen="home" onclick="navigateTo('home')">
+        <span class="nav-icon">✦</span> AI Command Center
+        <span class="nav-badge">5</span>
+      </li>
+      <li class="nav-item" data-screen="wallet" onclick="navigateTo('wallet')">
+        <span class="nav-icon">💳</span> Wallet
+      </li>
+      <li class="nav-item" data-screen="groups" onclick="navigateTo('groups')">
+        <span class="nav-icon">✈</span> Groups
+        <span class="nav-badge">3</span>
+      </li>
+      <li class="nav-item" data-screen="chat" onclick="navigateTo('chat')">
+        <span class="nav-icon">💬</span> Chat
+      </li>
+      <li class="nav-item" data-screen="detect" onclick="navigateTo('detect')">
+        <span class="nav-icon">🔍</span> Detect
+        <span class="nav-badge">7</span>
+      </li>
+      <li class="nav-item" data-screen="settle" onclick="navigateTo('settle')">
+        <span class="nav-icon">⚖</span> Settle
+      </li>
+      <li class="nav-item" data-screen="explain" onclick="navigateTo('explain')">
+        <span class="nav-icon">🤖</span> Ask Taro
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <div class="consent-badges">
+        <span class="consent-badge">🔒 End-to-end encrypted</span>
+        <span class="consent-badge">🛡 GDPR compliant</span>
+        <span class="consent-badge">👤 Data you own</span>
+      </div>
+      <div class="sidebar-version">v0.1 prototype</div>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main id="main">
+
+    <!-- ── SCREEN: home ── -->
+    <section id="screen-home" class="screen active">
+      <h1 id="taro-greeting" class="greeting-h1">Good morning, Julia ✦</h1>
+      <p class="greeting-sub">I detected 3 possible shared expenses today.</p>
+
+      <div id="suggestions-feed">
+
+        <!-- 1. Cafe Bloom -->
+        <div class="card suggestion-card card-expense" id="sugg-cafe">
+          <div class="sugg-header">
+            <div class="sugg-left">
+              <span class="sugg-icon">☕</span>
+              <div>
+                <div class="sugg-title">Cafe Bloom <span class="sugg-amount">₩50,000</span></div>
+                <div class="sugg-meta">Split 5 ways · <strong>₩10,000 each</strong></div>
+              </div>
+            </div>
+            <div class="sugg-tags">
+              <span class="tag tag-detect">Transaction Detected</span>
+              <span class="confidence-badge">87% confidence</span>
+            </div>
+          </div>
+          <div class="sugg-participants">
+            <span class="chip">J · Julia</span>
+            <span class="chip">S · Sarah</span>
+            <span class="chip">A · Alex</span>
+            <span class="chip">M · Minho</span>
+            <span class="chip">J · John</span>
+          </div>
+          <div class="sugg-actions">
+            <button class="btn btn-approve" onclick="openApprovalModal('cafe')">✓ Review &amp; Approve</button>
+            <button class="btn btn-edit" onclick="openApprovalModal('cafe', true)">✎ Edit</button>
+            <button class="btn btn-dismiss" onclick="dismissSuggestion('cafe')">✕ Dismiss</button>
+          </div>
+        </div>
+
+        <!-- 2. Hotel -->
+        <div class="card suggestion-card card-email" id="sugg-hotel">
+          <div class="sugg-header">
+            <div class="sugg-left">
+              <span class="sugg-icon">🏨</span>
+              <div>
+                <div class="sugg-title">Jeju Shilla Hotel <span class="sugg-amount">₩240,000</span></div>
+                <div class="sugg-meta">Split 4 ways · <strong>₩60,000 each</strong></div>
+              </div>
+            </div>
+            <div class="sugg-tags">
+              <span class="tag tag-email">Email Detected · Gmail</span>
+            </div>
+          </div>
+          <div class="sugg-participants">
+            <span class="chip">J · Julia</span>
+            <span class="chip">S · Sarah</span>
+            <span class="chip">A · Alex</span>
+            <span class="chip">M · Minho</span>
+          </div>
+          <div class="sugg-actions">
+            <button class="btn btn-approve" onclick="openApprovalModal('hotel')">✓ Add to Jeju Trip</button>
+            <button class="btn btn-edit" onclick="openApprovalModal('hotel', true)">✎ Edit</button>
+            <button class="btn btn-dismiss" onclick="dismissSuggestion('hotel')">Dismiss</button>
+          </div>
+        </div>
+
+        <!-- 3. John outstanding -->
+        <div class="card suggestion-card card-warning" id="sugg-john">
+          <div class="sugg-header">
+            <div class="sugg-left">
+              <span class="sugg-icon">⚠</span>
+              <div>
+                <div class="sugg-title">John · Outstanding Balance <span class="sugg-amount" style="color:var(--red)">₩100,000</span></div>
+                <div class="sugg-meta" style="color:var(--red)">Overdue · 7 days past due</div>
+              </div>
+            </div>
+            <div class="sugg-tags">
+              <span class="tag tag-warning">Overdue</span>
+            </div>
+          </div>
+          <div class="sugg-actions">
+            <button class="btn btn-approve" onclick="openReminderModal('john')">✉ Draft Reminder</button>
+            <button class="btn btn-edit" onclick="showFlexibleRepayment('john')">⟳ Flexible Repayment</button>
+            <button class="btn btn-dismiss" onclick="dismissSuggestion('john')">Later</button>
+          </div>
+        </div>
+
+        <!-- 4. Chat insight -->
+        <div class="card suggestion-card card-chat" id="sugg-chatinsight">
+          <div class="sugg-header">
+            <div class="sugg-left">
+              <span class="sugg-icon">💬</span>
+              <div>
+                <div class="sugg-title">Chat Insight: Cafe Bloom</div>
+                <div class="sugg-meta">"Only Sarah and I joined the cafe" — update split to 2 people</div>
+              </div>
+            </div>
+            <div class="sugg-tags">
+              <span class="tag tag-chat">Chat Insight</span>
+            </div>
+          </div>
+          <div class="insight-quote">"We went to Cafe Bloom earlier. Only Sarah and I joined btw" — Julia, 2:40 PM</div>
+          <div class="sugg-meta" style="margin-top:6px">New split: ₩25,000 each × 2 people (was ₩10,000 × 5)</div>
+          <div class="sugg-actions">
+            <button class="btn btn-approve" onclick="approveChatInsight()">✓ Update Split</button>
+            <button class="btn btn-dismiss" onclick="dismissSuggestion('chatinsight')">Keep original</button>
+          </div>
+        </div>
+
+        <!-- 5. Wallet low -->
+        <div class="card suggestion-card card-info" id="sugg-wallet">
+          <div class="sugg-header">
+            <div class="sugg-left">
+              <span class="sugg-icon">💳</span>
+              <div>
+                <div class="sugg-title">Wallet Below Group Minimum</div>
+                <div class="sugg-meta">After debts: ₩45,000 vs ₩50,000 minimum required</div>
+              </div>
+            </div>
+            <div class="sugg-tags">
+              <span class="tag" style="background:var(--lilac);color:var(--purple-dark)">Notice</span>
+            </div>
+          </div>
+          <div class="sugg-actions">
+            <button class="btn btn-primary" onclick="openTopUpModal()">+ Top Up</button>
+            <button class="btn btn-dismiss" onclick="dismissSuggestion('wallet')">Dismiss</button>
+          </div>
+        </div>
+
+      </div><!-- end suggestions-feed -->
+
+      <div class="section-heading">Quick commands</div>
+      <div class="quick-commands">
+        <button class="quick-cmd" onclick="askTaro('Who still owes me money?')">Who owes me?</button>
+        <button class="quick-cmd" onclick="askTaro('Show unpaid balances')">Unpaid balances</button>
+        <button class="quick-cmd" onclick="askTaro('Settle the Jeju trip')">Settle Jeju trip</button>
+        <button class="quick-cmd" onclick="askTaro('Why do I owe 17,500 KRW?')">Explain ₩17,500</button>
+        <button class="quick-cmd" onclick="askTaro('Create a payment reminder for Alex')">Remind Alex</button>
+      </div>
+
+      <div class="section-heading">Recent activity</div>
+      <div class="activity-list">
+        <div class="activity-item">
+          <div class="activity-dot dot-green"></div>
+          <div class="activity-body">
+            <span class="activity-title">Sarah settled ₩25,000</span>
+            <span class="activity-time">2 min ago</span>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot dot-purple"></div>
+          <div class="activity-body">
+            <span class="activity-title">Hotel booking detected via Gmail</span>
+            <span class="activity-time">1 hour ago</span>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot dot-orange"></div>
+          <div class="activity-body">
+            <span class="activity-title">John's payment is 7 days overdue</span>
+            <span class="activity-time">Today</span>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot dot-purple"></div>
+          <div class="activity-body">
+            <span class="activity-title">Cafe Bloom ₩50,000 transaction detected</span>
+            <span class="activity-time">Today 2:34 PM</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SCREEN: wallet ── -->
+    <section id="screen-wallet" class="screen">
+      <h2 class="screen-title">Wallet</h2>
+
+      <div class="wallet-balance-card">
+        <div class="wb-label">Available Balance</div>
+        <div class="wb-amount" id="wallet-balance-display">₩120,000</div>
+        <div class="wb-sub">Jeju Trip group · Min ₩50,000 required</div>
+        <div class="wallet-actions">
+          <button class="btn btn-wallet-action" onclick="openTopUpModal()">+ Top Up</button>
+          <button class="btn btn-wallet-action" onclick="openWithdrawModal()">↑ Withdraw</button>
+          <button class="btn btn-wallet-action" onclick="openTransferModal()">→ Transfer</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-row-header">
+          <div>
+            <div class="card-label">Auto-Settlement</div>
+            <div class="card-sublabel">Automatically settle debts when received</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="auto-settle-toggle" checked onchange="toggleAutoSettle(this)" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div id="auto-settle-body">
+          <div class="setting-row">
+            <label class="setting-label">Per-transaction limit</label>
+            <div class="setting-input-row">
+              <span>₩</span>
+              <input type="number" id="auto-settle-limit" value="30000" class="setting-input" oninput="updateAutoSettleLimit(this.value)" />
+              <span id="limit-display" class="limit-display">₩30,000</span>
+            </div>
+          </div>
+          <div class="setting-row">
+            <label class="setting-label">Monthly limit</label>
+            <div class="setting-input-row">
+              <span>₩</span>
+              <input type="number" id="auto-settle-monthly" value="200000" class="setting-input" />
+              <span class="limit-display">₩200,000</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Group minimum balance</div>
+        <div class="progress-row">
+          <div class="progress-bar-wrap">
+            <div class="progress-bar" style="width:72%;background:var(--green)"></div>
+          </div>
+          <span class="progress-label">₩120,000 / ₩50,000 min — <span style="color:var(--green);font-weight:600">Met ✓</span></span>
+        </div>
+      </div>
+
+      <div class="section-heading">Transaction history</div>
+      <div id="transaction-list"></div>
+    </section>
+
+    <!-- ── SCREEN: groups ── -->
+    <section id="screen-groups" class="screen">
+      <div class="card group-header-card">
+        <div class="group-header-top">
+          <div>
+            <h2 class="group-title">✈ Jeju Trip</h2>
+            <div class="group-meta">Jun 15–17 2025 · 5 members</div>
+          </div>
+          <div class="trip-code-block">
+            <span class="trip-code-label">Trip code</span>
+            <button class="trip-code" onclick="copyTripCode()">JEJU2025 📋</button>
+          </div>
+        </div>
+        <div class="group-stats-row">
+          <div class="group-stat">
+            <div class="stat-value">₩463,000</div>
+            <div class="stat-label">Total spent</div>
+          </div>
+          <div class="group-stat">
+            <div class="stat-value">₩92,600</div>
+            <div class="stat-label">Per person</div>
+          </div>
+          <div class="group-stat">
+            <div class="stat-value" style="color:var(--orange)">₩100,000</div>
+            <div class="stat-label">Unsettled</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Settlement health</div>
+        <div class="health-bar-wrap">
+          <div class="health-bar" style="width:60%"></div>
+        </div>
+        <div class="health-labels">
+          <span class="health-label status-settled">Sarah ✓</span>
+          <span class="health-label status-settled">Julia ✓</span>
+          <span class="health-label status-pending">Alex pending</span>
+          <span class="health-label status-extension">Minho ext.</span>
+          <span class="health-label status-overdue">John overdue</span>
+        </div>
+      </div>
+
+      <div class="section-heading">Members</div>
+      <div id="members-grid" class="members-grid"></div>
+
+      <div class="section-heading">Spending by category</div>
+      <div id="category-breakdown"></div>
+
+      <div class="card cta-card">
+        <div class="cta-text">
+          <div class="cta-title">3 balances unsettled</div>
+          <div class="cta-sub">Alex ₩10,000 · Minho ₩17,500 · John ₩100,000</div>
+        </div>
+        <button class="btn btn-primary settle-all-btn" onclick="openSettleAllModal()">✦ One-tap Settle All</button>
+      </div>
+    </section>
+
+    <!-- ── SCREEN: chat ── -->
+    <section id="screen-chat" class="screen">
+      <div class="chat-screen-header">
+        <h2 class="screen-title">💬 Jeju Trip Chat</h2>
+        <span class="chat-members-badge">5 members</span>
+      </div>
+      <div class="chat-wrap card" style="padding:0;overflow:hidden">
+        <div class="chat-messages" id="chat-messages"></div>
+        <div class="chat-input-row">
+          <input type="text" id="chat-input" class="chat-input" placeholder="Type a message…" />
+          <button class="btn btn-primary chat-send" id="chat-send-btn">Send</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SCREEN: detect ── -->
+    <section id="screen-detect" class="screen">
+      <h2 class="screen-title">🔍 Detect Expenses</h2>
+      <div class="sources-grid">
+        <div class="source-card source-active">
+          <div class="source-icon">💳</div>
+          <div class="source-info">
+            <div class="source-name">Wallet</div>
+            <div class="source-status source-on">Active · 2 detected</div>
+          </div>
+        </div>
+        <div class="source-card source-active">
+          <div class="source-icon">📧</div>
+          <div class="source-info">
+            <div class="source-name">Email</div>
+            <div class="source-status source-on">Active · 3 detected</div>
+          </div>
+        </div>
+        <div class="source-card source-active">
+          <div class="source-icon">💬</div>
+          <div class="source-info">
+            <div class="source-name">Chat</div>
+            <div class="source-status source-on">Active · 2 insights</div>
+          </div>
+        </div>
+        <div class="source-card source-inactive" onclick="enableCallMonitoring()">
+          <div class="source-icon">📞</div>
+          <div class="source-info">
+            <div class="source-name">Calls</div>
+            <div class="source-status source-off">Off · Enable</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-heading">💳 Detected transactions</div>
+      <div class="detect-card">
+        <div class="detect-icon">☕</div>
+        <div class="detect-body">
+          <div class="detect-merchant">Cafe Bloom</div>
+          <div class="detect-meta">₩50,000 · Today 2:34 PM · Wallet transaction</div>
+          <div class="detect-confidence">Confidence: 87% · Food &amp; Drinks</div>
+        </div>
+        <button class="btn btn-approve detect-btn" onclick="openApprovalModal('cafe')">Review</button>
+      </div>
+      <div class="detect-card">
+        <div class="detect-icon">🚕</div>
+        <div class="detect-body">
+          <div class="detect-merchant">KakaoTaxi</div>
+          <div class="detect-meta">₩18,000 · Today 1:20 PM · Wallet transaction</div>
+          <div class="detect-confidence">Confidence: 95% · Transportation</div>
+        </div>
+        <button class="btn btn-approve detect-btn" onclick="openApprovalModal('taxi')">Review</button>
+      </div>
+
+      <div class="section-heading">📧 Detected emails / bookings</div>
+      <div class="detect-card">
+        <div class="detect-icon">🏨</div>
+        <div class="detect-body">
+          <div class="detect-merchant">Jeju Shilla Hotel</div>
+          <div class="detect-meta">₩240,000 · Gmail · Booking confirmation</div>
+          <div class="detect-confidence">Confidence: 99% · Accommodation</div>
+        </div>
+        <button class="btn btn-approve detect-btn" onclick="openApprovalModal('hotel')">Review</button>
+      </div>
+      <div class="detect-card">
+        <div class="detect-icon">🎡</div>
+        <div class="detect-body">
+          <div class="detect-merchant">Jeju Stone Park</div>
+          <div class="detect-meta">₩80,000 · Gmail · Ticket confirmation</div>
+          <div class="detect-confidence">Confidence: 92% · Activities</div>
+        </div>
+        <button class="btn btn-approve detect-btn" onclick="openApprovalModal('tickets')">Review</button>
+      </div>
+      <div class="detect-card">
+        <div class="detect-icon">✈️</div>
+        <div class="detect-body">
+          <div class="detect-merchant">Jeju Air KE121</div>
+          <div class="detect-meta">₩375,000 · Gmail · Flight confirmation</div>
+          <div class="detect-confidence">Confidence: 98% · Transportation</div>
+        </div>
+        <button class="btn btn-approve detect-btn" onclick="openApprovalModal('flight')">Review</button>
+      </div>
+
+      <div class="section-heading">💬 Chat &amp; call insights</div>
+      <div class="detect-card">
+        <div class="detect-icon">💬</div>
+        <div class="detect-body">
+          <div class="detect-merchant">Chat Insight · Cafe Bloom</div>
+          <div class="detect-meta">"Only Sarah and I joined the cafe" → Split should be 2 people</div>
+          <div class="detect-confidence">From: Jeju Trip Chat · 2:40 PM</div>
+        </div>
+        <button class="btn btn-approve detect-btn" onclick="approveChatInsight()">Apply</button>
+      </div>
+      <div class="detect-card detect-locked">
+        <div class="detect-icon">🔒</div>
+        <div class="detect-body">
+          <div class="detect-merchant">Call transcript</div>
+          <div class="detect-meta">Enable call monitoring to unlock insights</div>
+          <div class="detect-confidence">Requires consent · Privacy protected</div>
+        </div>
+        <button class="btn btn-edit detect-btn" onclick="enableCallMonitoring()">Enable</button>
+      </div>
+
+      <div class="section-heading">📄 Add expense manually</div>
+      <div class="manual-buttons">
+        <button class="manual-btn" onclick="simulateReceiptCapture('photo')">📷 Photo</button>
+        <button class="manual-btn" onclick="simulateReceiptCapture('screenshot')">🖼 Screenshot</button>
+        <button class="manual-btn" onclick="simulateReceiptCapture('voice')">🎤 Voice</button>
+        <button class="manual-btn" onclick="openManualExpense()">✏ Manual</button>
+      </div>
+    </section>
+
+    <!-- ── SCREEN: settle ── -->
+    <section id="screen-settle" class="screen">
+      <div class="settle-header">
+        <h2 class="screen-title">⚖ Settle</h2>
+        <button class="btn btn-primary" onclick="openSettleAllModal()">Settle All</button>
+      </div>
+
+      <div id="balance-summary"></div>
+
+      <div class="section-heading">Settlement scores</div>
+      <div id="score-cards"></div>
+
+      <div class="card card-warning" style="border-left:4px solid var(--red)">
+        <div class="warning-row">
+          <div class="warning-icon">⚠</div>
+          <div>
+            <div class="warning-title">John · ₩100,000 overdue</div>
+            <div class="warning-sub">7 days past due · Extension requested before</div>
+          </div>
+        </div>
+        <div class="sugg-actions" style="margin-top:12px">
+          <button class="btn btn-approve" onclick="openReminderModal('john')">✉ Send Reminder</button>
+          <button class="btn btn-edit" onclick="showFlexibleRepayment('john')">⟳ Flexible Plan</button>
+        </div>
+      </div>
+
+      <div class="section-heading">Individual balances</div>
+      <div id="individual-balances"></div>
+    </section>
+
+    <!-- ── SCREEN: explain ── -->
+    <section id="screen-explain" class="screen">
+      <h2 class="screen-title">🤖 Ask Taro</h2>
+      <p class="screen-sub">Ask me anything about your expenses, balances, or settlements.</p>
+
+      <div class="section-heading">Quick questions</div>
+      <div class="quick-questions">
+        <button class="quick-q-btn" onclick="askTaro('Why do I owe 17,500 KRW?')">Why do I owe ₩17,500?</button>
+        <button class="quick-q-btn" onclick="askTaro('Who still owes me money?')">Who owes me money?</button>
+        <button class="quick-q-btn" onclick="askTaro('How was the hotel split calculated?')">Hotel split?</button>
+        <button class="quick-q-btn" onclick="askTaro('Show unpaid balances')">Show unpaid balances</button>
+        <button class="quick-q-btn" onclick="askTaro('Settle the Jeju trip')">Settle Jeju trip</button>
+        <button class="quick-q-btn" onclick="askTaro('Create a payment reminder for Alex')">Remind Alex</button>
+        <button class="quick-q-btn" onclick="askTaro('Let Alex pay later')">Let Alex pay later</button>
+        <button class="quick-q-btn" onclick="askTaro('Split dinner among everyone except John')">Split without John</button>
+      </div>
+
+      <div class="explain-chat-wrap" id="explain-chat-wrap">
+        <div class="explain-messages" id="explain-messages">
+          <div class="explain-bubble taro-bubble">
+            <div class="taro-avatar-small">
+              <svg width="28" height="28" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="24" cy="32" rx="15" ry="11" fill="#C9B8E8" stroke="#7C5CBF" stroke-width="1.5"/>
+                <circle cx="24" cy="21" r="13" fill="#EDE8F8" stroke="#7C5CBF" stroke-width="1.5"/>
+                <circle cx="19.5" cy="20" r="2.5" fill="#5B3FAF"/>
+                <circle cx="28.5" cy="20" r="2.5" fill="#5B3FAF"/>
+                <circle cx="20.3" cy="19.2" r="0.8" fill="white"/>
+                <circle cx="29.3" cy="19.2" r="0.8" fill="white"/>
+                <path d="M 19 25.5 Q 24 29 29 25.5" stroke="#7C5CBF" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                <path d="M 24 8 C 17 4 11 11 17 16 C 19.5 11 24 8 24 8 Z" fill="#B8A0E0"/>
+                <path d="M 24 8 C 31 4 37 11 31 16 C 28.5 11 24 8 24 8 Z" fill="#9B7DD4"/>
+                <line x1="24" y1="8" x2="24" y2="16" stroke="#7C5CBF" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="explain-bubble-text">
+              Hi Julia! I'm Taro, your AI expense coordinator ✦<br/><br/>
+              I'm tracking the Jeju Trip with 5 members. You have <strong>₩120,000</strong> in your wallet. There are <strong>3 unsettled balances</strong> totaling <strong>₩127,500</strong>.<br/><br/>
+              Ask me anything — try a quick question above or type below!
+            </div>
+          </div>
+        </div>
+        <div class="explain-input-row">
+          <input type="text" id="explain-input" class="explain-input" placeholder="Ask Taro anything…" onkeydown="if(event.key==='Enter') sendExplainMessage()" />
+          <button class="btn btn-primary" onclick="sendExplainMessage()">Ask</button>
+        </div>
+      </div>
+    </section>
+
+  </main><!-- end #main -->
+
+  <!-- Mobile bottom nav -->
+  <nav id="bottom-nav">
+    <button class="bnav-item active" data-screen="home" onclick="navigateTo('home')">
+      <span class="bnav-icon">✦</span>
+      <span class="bnav-label">Taro</span>
+    </button>
+    <button class="bnav-item" data-screen="wallet" onclick="navigateTo('wallet')">
+      <span class="bnav-icon">💳</span>
+      <span class="bnav-label">Wallet</span>
+    </button>
+    <button class="bnav-item" data-screen="groups" onclick="navigateTo('groups')">
+      <span class="bnav-icon">✈</span>
+      <span class="bnav-label">Groups</span>
+    </button>
+    <button class="bnav-item" data-screen="settle" onclick="navigateTo('settle')">
+      <span class="bnav-icon">⚖</span>
+      <span class="bnav-label">Settle</span>
+    </button>
+    <button class="bnav-item" data-screen="explain" onclick="navigateTo('explain')">
+      <span class="bnav-icon">🤖</span>
+      <span class="bnav-label">Ask</span>
+    </button>
+  </nav>
+
+</div><!-- end #app -->
+
+<!-- Modal -->
+<div id="modal-overlay" class="hidden" onclick="closeModal(event)">
+  <div id="modal-box">
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div id="toast-container"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
