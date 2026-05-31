@@ -44,6 +44,100 @@ const MOCK_CHAT = [
   { id: 8, sender: 'sarah', name: 'Sarah', text: "I'll pay first and we split — Taro will sort it", time: '6:05 PM' },
 ];
 
+const CHAT_ROOMS = [
+  {
+    id: 'jeju-group',
+    type: 'group',
+    name: 'Jeju Trip',
+    subtitle: '5 members',
+    members: ['julia','sarah','alex','john','minho'],
+    lastMessage: "I'll pay first and we split — Taro will sort it",
+    lastTime: '6:05 PM',
+    unread: 2,
+    messages: [
+      { id: 1, sender: 'sarah', name: 'Sarah', text: 'Hey everyone! So excited for Jeju!', time: '9:00 AM' },
+      { id: 2, sender: 'julia', name: 'Julia', text: 'I booked the hotel — ₩240,000 for 4 people', time: '9:05 AM' },
+      { id: 3, sender: 'alex',  name: 'Alex',  text: "Thanks Julia! I'll transfer my share soon", time: '9:07 AM' },
+      { id: 4, sender: 'john',  name: 'John',  text: 'Can I pay later? A bit tight this week', time: '9:10 AM' },
+      { id: 5, sender: 'julia', name: 'Julia', text: 'We went to Cafe Bloom. Only Sarah and I joined btw', time: '2:40 PM', taroDetect: true, taroInsight: { text: '"Only Julia and Sarah joined" → Split Cafe Bloom with 2 people instead of 5. ₩25,000 each.', actionLabel: 'Update split' } },
+      { id: 6, sender: 'sarah', name: 'Sarah', text: 'Their lavender latte was amazing', time: '2:42 PM' },
+      { id: 7, sender: 'julia', name: 'Julia', text: 'Dinner tonight at Jeju Black Pork? Everyone come!', time: '6:00 PM' },
+      { id: 8, sender: 'sarah', name: 'Sarah', text: "I'll pay first and we split — Taro will sort it", time: '6:05 PM', taroDetect: true, taroInsight: { text: 'Sarah said she will pay first and split later. Should I create a dinner expense draft?', actionLabel: 'Create expense draft' } },
+    ],
+  },
+  {
+    id: 'cafe-group',
+    type: 'group',
+    name: 'Cafe Outing',
+    subtitle: '3 members',
+    members: ['julia','sarah','alex'],
+    lastMessage: 'Split 3-ways works for me',
+    lastTime: 'Yesterday',
+    unread: 0,
+    messages: [
+      { id: 1, sender: 'sarah', name: 'Sarah', text: 'Anyone up for coffee this afternoon?', time: '1:00 PM' },
+      { id: 2, sender: 'alex',  name: 'Alex',  text: "I'm in! Where?", time: '1:05 PM' },
+      { id: 3, sender: 'julia', name: 'Julia', text: 'Cafe Bloom sounds good. I can cover and we split', time: '1:10 PM', taroDetect: true, taroInsight: { text: 'Julia offered to pay for the group. Should I create a Cafe Bloom expense draft split 3 ways?', actionLabel: 'Create expense' } },
+      { id: 4, sender: 'alex',  name: 'Alex',  text: 'Split the bill between us?', time: '1:15 PM' },
+      { id: 5, sender: 'sarah', name: 'Sarah', text: 'Split 3-ways works for me', time: '1:16 PM' },
+    ],
+  },
+  {
+    id: 'sarah-dm',
+    type: 'dm',
+    memberId: 'sarah',
+    name: 'Sarah',
+    subtitle: 'All settled',
+    status: 'settled',
+    balance: 0,
+    lastMessage: 'I already paid my share!',
+    lastTime: '2 min ago',
+    unread: 1,
+    messages: [
+      { id: 1, sender: 'sarah', name: 'Sarah', text: 'Hey Julia! Did you get the transfer for the hotel?', time: '10:00 AM' },
+      { id: 2, sender: 'julia', name: 'Julia', text: "Yes I got it! Thanks Sarah, you're always so reliable", time: '10:05 AM' },
+      { id: 3, sender: 'sarah', name: 'Sarah', text: 'I already paid my share!', time: '10:06 AM' },
+      { id: 4, sender: 'sarah', name: 'Sarah', text: 'Are we splitting dinner tonight too?', time: '10:08 AM' },
+    ],
+  },
+  {
+    id: 'alex-dm',
+    type: 'dm',
+    memberId: 'alex',
+    name: 'Alex',
+    subtitle: 'Pending · ₩10,000',
+    status: 'pending',
+    balance: 10000,
+    lastMessage: "I'll transfer tonight",
+    lastTime: 'Today',
+    unread: 0,
+    messages: [
+      { id: 1, sender: 'alex',  name: 'Alex',  text: "Hey Julia! About the cafe — I'll pay you back soon, promise!", time: '3:00 PM' },
+      { id: 2, sender: 'julia', name: 'Julia', text: 'No rush! Just ₩10,000 for the cafe split', time: '3:05 PM' },
+      { id: 3, sender: 'alex',  name: 'Alex',  text: "Got it, I'll transfer tonight", time: '3:10 PM' },
+    ],
+    taroProactiveInsight: { text: 'Alex has a pending balance of ₩10,000. Would you like me to send a friendly reminder?', actionLabel: 'Send reminder', type: 'reminder' },
+  },
+  {
+    id: 'john-dm',
+    type: 'dm',
+    memberId: 'john',
+    name: 'John',
+    subtitle: 'Overdue · ₩100,000',
+    status: 'overdue',
+    balance: 100000,
+    lastMessage: 'Can I pay next week?',
+    lastTime: '2 days ago',
+    unread: 0,
+    messages: [
+      { id: 1, sender: 'john',  name: 'John',  text: "Hey, about the Jeju trip balance... can I pay next week?", time: '2 days ago' },
+      { id: 2, sender: 'julia', name: 'Julia', text: "That's okay John, let me know when you can settle", time: '2 days ago' },
+      { id: 3, sender: 'john',  name: 'John',  text: 'Thanks for understanding. Things have been tough lately', time: '2 days ago' },
+    ],
+    taroProactiveInsight: { text: "John's ₩100,000 balance is 7 days overdue. Taro suggests offering flexible repayment to avoid awkwardness.", actionLabel: 'Offer flex plan', type: 'flexible' },
+  },
+];
+
 const MOCK_GROUPS = [
   { id: 'jeju',   name: 'Jeju Trip',          dates: 'Jun 15–17, 2025',    members: ['julia','sarah','alex','john','minho'], total: 463000, unsettled: 127500, icon: '✈', status: 'active' },
   { id: 'seoul',  name: 'Seoul Weekend',       dates: 'May 3–4, 2025',      members: ['julia','sarah','alex'],                total: 185000, unsettled: 0,       icon: '🏙', status: 'settled' },
@@ -499,115 +593,222 @@ function GroupsScreen({ selectedGroup, setSelectedGroup, members, expenses, onOp
 
 // ─── Chat Screen ──────────────────────────────────────
 
-function ChatScreen({ chatMessages, setChatMessages, members, showToast }) {
+function ChatScreen({ members, showToast, onOpenModal }) {
+  const [rooms, setRooms] = useState(CHAT_ROOMS);
+  const [activeId, setActiveId] = useState('jeju-group');
   const [input, setInput] = useState('');
-  const [taroInsightDismissed, setTaroInsightDismissed] = useState(false);
+  const [search, setSearch] = useState('');
+  const [dismissedInsights, setDismissedInsights] = useState(new Set());
+  const [mobileView, setMobileView] = useState('list'); // 'list' | 'chat'
   const messagesEndRef = useRef(null);
+
+  const activeRoom = rooms.find(r => r.id === activeId);
 
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [chatMessages]);
+  }, [activeId, rooms]);
 
-  const expenseKeywords = ['pay', 'split', 'owe', "i'll cover", 'cover', 'bill', 'receipt', '₩', 'won'];
+  const expenseKeywords = ['pay', 'split', 'owe', 'cover', 'bill', 'receipt', '₩', 'won', 'transfer', 'debt', 'reimburse'];
 
   const sendMessage = () => {
     if (!input.trim()) return;
     const text = input.trim();
-    const newMsg = { id: Date.now(), sender: 'julia', name: 'Julia', text, time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) };
-    const hasExpenseKeyword = expenseKeywords.some(kw => text.toLowerCase().includes(kw));
-    const msgs = [...chatMessages, newMsg];
-    if (hasExpenseKeyword) {
-      msgs.push({
-        id: Date.now() + 1,
-        sender: '_taro',
-        name: 'Taro',
-        text: null,
-        taroInsightNew: true,
-        insight: 'Taro detected an expense mention. Want me to create an expense from this?',
-        time: 'now',
-      });
+    const now = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    const newMsg = { id: Date.now(), sender: 'julia', name: 'Julia', text, time: now };
+    const hasKeyword = expenseKeywords.some(kw => text.toLowerCase().includes(kw));
+    const newMsgs = [...(activeRoom?.messages || []), newMsg];
+
+    if (hasKeyword) {
+      const isGroup = activeRoom?.type === 'group';
+      let insight;
+      if (isGroup) {
+        insight = 'Taro detected an expense mention. Should I create an expense draft from this message?';
+      } else if (activeRoom?.status === 'overdue') {
+        insight = `You mentioned money with ${activeRoom.name} (${fmt(activeRoom.balance)} overdue). Would you like Taro to draft a reminder or offer flexible repayment?`;
+      } else {
+        insight = `You mentioned money with ${activeRoom.name}. Would you like Taro to create a reminder or log this as an expense?`;
+      }
+      newMsgs.push({ id: Date.now() + 1, sender: '_taro', taroInsightNew: true, insight, time: now });
     }
-    setChatMessages(msgs);
+
+    setRooms(prev => prev.map(r =>
+      r.id === activeId ? { ...r, messages: newMsgs, lastMessage: text, lastTime: 'now', unread: 0 } : r
+    ));
     setInput('');
   };
 
-  const getMember = (id) => members.find(m => m.id === id) || { initials: id.substring(0,2).toUpperCase(), name: id };
+  const getMember = (id) => members.find(m => m.id === id) || { initials: (id || 'XX').substring(0, 2).toUpperCase(), name: id };
+  const dismissInsight = (key) => setDismissedInsights(prev => new Set([...prev, key]));
+  const filteredRooms = rooms.filter(r => r.name.toLowerCase().includes(search.toLowerCase()));
 
-  return (
-    <div className="screen">
-      <h1 className="screen-title">Jeju Trip Chat</h1>
-      <p className="screen-sub" style={{ marginBottom: 12 }}>5 members · Jun 15–17 · Taro is monitoring</p>
+  const statusColor = { settled: 'var(--green)', pending: 'var(--orange)', overdue: 'var(--red)' };
 
-      <div className="chat-wrap">
-        <div className="chat-messages">
-          {chatMessages.map((msg, idx) => {
-            const isMe = msg.sender === 'julia';
-            const isTaroInsight = msg.taroInsightNew;
+  const openChat = (id) => { setActiveId(id); setInput(''); setMobileView('chat'); };
 
-            if (isTaroInsight) {
-              return (
-                <div key={msg.id} className="chat-taro-insight" style={{ alignSelf: 'center', maxWidth: '85%' }}>
-                  <div style={{ fontWeight: 700, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>✦ Taro Insight</div>
-                  <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 }}>{msg.insight}</div>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <button className="btn btn-primary" style={{ fontSize: 11, padding: '4px 12px' }} onClick={() => showToast('Expense created from chat')}>Create expense</button>
-                    <button className="btn btn-ghost" style={{ fontSize: 11, padding: '4px 12px' }}>Ignore</button>
-                  </div>
-                </div>
-              );
-            }
+  // ── Chat list panel ──
+  const ListPanel = (
+    <div className="chat-list-panel">
+      <div className="chat-list-top">
+        <div className="chat-list-title">Messages</div>
+        <div style={{ display: 'flex', gap: 6 }}>
+          <button className="btn btn-primary" style={{ fontSize: 11, padding: '4px 10px' }} onClick={() => showToast('Add Friend — coming soon')}>+ Friend</button>
+          <button className="btn" style={{ fontSize: 11, padding: '4px 10px' }} onClick={() => showToast('Create Group — coming soon')}>+ Group</button>
+        </div>
+      </div>
+      <div className="chat-search-wrap">
+        <input className="chat-search-input" placeholder="Search..." value={search} onChange={e => setSearch(e.target.value)} />
+      </div>
+      <div className="chat-list-items">
+        {filteredRooms.map(room => (
+          <div key={room.id} className={`chat-list-item${activeId === room.id ? ' active' : ''}`} onClick={() => openChat(room.id)}>
+            <div className="chat-list-avatar">
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 700 }}>
+                {room.type === 'group' ? room.name.charAt(0) : getMember(room.memberId).initials}
+              </span>
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontWeight: 600, fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{room.name}</span>
+                <span style={{ fontSize: 10, color: 'var(--text-light)', flexShrink: 0, marginLeft: 6 }}>{room.lastTime}</span>
+              </div>
+              <div style={{ fontSize: 11, color: room.status ? statusColor[room.status] || 'var(--text-muted)' : 'var(--text-muted)', marginTop: 1 }}>{room.subtitle}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-light)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 1 }}>{room.lastMessage}</div>
+            </div>
+            {room.unread > 0 && (
+              <div style={{ width: 18, height: 18, background: 'var(--text)', color: 'white', borderRadius: '50%', fontSize: 10, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginLeft: 6 }}>{room.unread}</div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 
-            if (msg.taroDetect && !taroInsightDismissed) {
-              return (
-                <React.Fragment key={msg.id}>
-                  <div className={`chat-bubble-wrap${isMe ? ' mine' : ''}`}>
-                    {!isMe && <div className="avatar" style={{ width: 28, height: 28, fontSize: 11, flexShrink: 0 }}>{getMember(msg.sender).initials}</div>}
-                    <div>
-                      {!isMe && <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 3 }}>{msg.name}</div>}
-                      <div className={`chat-bubble ${isMe ? 'mine' : 'theirs'}`}>{msg.text}</div>
-                      <div style={{ fontSize: 10, color: 'var(--text-light)', marginTop: 3 }}>{msg.time}</div>
-                    </div>
-                  </div>
-                  <div className="chat-taro-insight" style={{ alignSelf: 'center', maxWidth: '85%' }}>
-                    <div style={{ fontWeight: 700, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>✦ Taro Detected</div>
-                    <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 }}>
-                      "Only Julia and Sarah joined" → Split Cafe Bloom with 2 people instead of 5. <span className="amount" style={{ fontWeight: 600 }}>₩25,000 each</span>.
-                    </div>
-                    <div style={{ display: 'flex', gap: 8 }}>
-                      <button className="btn btn-primary" style={{ fontSize: 11, padding: '4px 12px' }} onClick={() => { showToast('Split updated: ₩25,000 each'); setTaroInsightDismissed(true); }}>Update split</button>
-                      <button className="btn btn-ghost" style={{ fontSize: 11, padding: '4px 12px' }} onClick={() => setTaroInsightDismissed(true)}>Ignore</button>
-                    </div>
-                  </div>
-                </React.Fragment>
-              );
-            }
+  // ── Active chat window ──
+  const ChatWindow = activeRoom ? (
+    <div className="chat-main-panel">
+      {/* Header */}
+      <div className="chat-header">
+        <button className="chat-back-btn btn btn-ghost" onClick={() => setMobileView('list')}>←</button>
+        <div className="chat-list-avatar" style={{ width: 34, height: 34 }}>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 700 }}>
+            {activeRoom.type === 'group' ? activeRoom.name.charAt(0) : getMember(activeRoom.memberId).initials}
+          </span>
+        </div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontWeight: 600, fontSize: 14, fontFamily: 'var(--font-serif)' }}>{activeRoom.name}</div>
+          <div style={{ fontSize: 11, color: activeRoom.status ? statusColor[activeRoom.status] || 'var(--text-muted)' : 'var(--text-muted)' }}>
+            {activeRoom.type === 'group'
+              ? `${activeRoom.members.length} members · Taro monitoring`
+              : activeRoom.subtitle}
+          </div>
+        </div>
+        {activeRoom.type === 'dm' && activeRoom.balance > 0 && (
+          <button className="btn btn-primary" style={{ fontSize: 11, padding: '5px 12px', flexShrink: 0 }}
+            onClick={() => onOpenModal('wallet-settle', members.find(m => m.id === activeRoom.memberId))}>
+            Settle {fmt(activeRoom.balance)}
+          </button>
+        )}
+      </div>
 
+      {/* Proactive Taro banner for DMs */}
+      {activeRoom.taroProactiveInsight && !dismissedInsights.has(`pro-${activeRoom.id}`) && (
+        <div className="chat-taro-proactive">
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.05em', marginBottom: 4 }}>✦ TARO</div>
+          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 }}>{activeRoom.taroProactiveInsight.text}</div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button className="btn btn-primary" style={{ fontSize: 11, padding: '4px 12px' }} onClick={() => {
+              const m = members.find(mb => mb.id === activeRoom.memberId);
+              if (activeRoom.taroProactiveInsight.type === 'reminder') onOpenModal('reminder', m);
+              else if (activeRoom.taroProactiveInsight.type === 'flexible') onOpenModal('flexible', m);
+              dismissInsight(`pro-${activeRoom.id}`);
+            }}>{activeRoom.taroProactiveInsight.actionLabel}</button>
+            <button className="btn btn-ghost" style={{ fontSize: 11, padding: '4px 12px' }} onClick={() => dismissInsight(`pro-${activeRoom.id}`)}>Dismiss</button>
+          </div>
+        </div>
+      )}
+
+      {/* Messages */}
+      <div className="chat-messages">
+        {activeRoom.messages.map(msg => {
+          const isMe = msg.sender === 'julia';
+
+          if (msg.taroInsightNew) {
             return (
-              <div key={msg.id} className={`chat-bubble-wrap${isMe ? ' mine' : ''}`}>
-                {!isMe && <div className="avatar" style={{ width: 28, height: 28, fontSize: 11, flexShrink: 0 }}>{getMember(msg.sender).initials}</div>}
-                <div>
-                  {!isMe && <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 3 }}>{msg.name}</div>}
-                  <div className={`chat-bubble ${isMe ? 'mine' : 'theirs'}`}>{msg.text}</div>
-                  <div style={{ fontSize: 10, color: 'var(--text-light)', marginTop: 3 }}>{msg.time}</div>
+              <div key={msg.id} className="chat-taro-insight" style={{ alignSelf: 'center', maxWidth: '82%' }}>
+                <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.05em', marginBottom: 4 }}>✦ TARO INSIGHT</div>
+                <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 }}>{msg.insight}</div>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button className="btn btn-primary" style={{ fontSize: 11, padding: '4px 12px' }} onClick={() => showToast('Done!')}>Action</button>
+                  <button className="btn btn-ghost" style={{ fontSize: 11, padding: '4px 12px' }}>Ignore</button>
                 </div>
               </div>
             );
-          })}
-          <div ref={messagesEndRef} />
-        </div>
-        <div className="chat-input-row">
-          <input
-            className="chat-input"
-            placeholder="Message Jeju Trip..."
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && sendMessage()}
-          />
-          <button className="chat-send" onClick={sendMessage}>Send</button>
-        </div>
+          }
+
+          if (msg.taroDetect && !dismissedInsights.has(`msg-${msg.id}`)) {
+            return (
+              <React.Fragment key={msg.id}>
+                <div className={`chat-bubble-wrap${isMe ? ' mine' : ''}`}>
+                  {!isMe && <div className="avatar" style={{ width: 28, height: 28, fontSize: 11, flexShrink: 0 }}>{getMember(msg.sender).initials}</div>}
+                  <div>
+                    {!isMe && <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 3 }}>{msg.name}</div>}
+                    <div className={`chat-bubble ${isMe ? 'mine' : 'theirs'}`}>{msg.text}</div>
+                    <div style={{ fontSize: 10, color: 'var(--text-light)', marginTop: 3 }}>{msg.time}</div>
+                  </div>
+                </div>
+                <div className="chat-taro-insight" style={{ alignSelf: 'center', maxWidth: '82%' }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.05em', marginBottom: 4 }}>✦ TARO DETECTED</div>
+                  <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 }}>{msg.taroInsight.text}</div>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button className="btn btn-primary" style={{ fontSize: 11, padding: '4px 12px' }}
+                      onClick={() => { showToast(msg.taroInsight.actionLabel); dismissInsight(`msg-${msg.id}`); }}>
+                      {msg.taroInsight.actionLabel}
+                    </button>
+                    <button className="btn btn-ghost" style={{ fontSize: 11, padding: '4px 12px' }} onClick={() => dismissInsight(`msg-${msg.id}`)}>Ignore</button>
+                  </div>
+                </div>
+              </React.Fragment>
+            );
+          }
+
+          return (
+            <div key={msg.id} className={`chat-bubble-wrap${isMe ? ' mine' : ''}`}>
+              {!isMe && <div className="avatar" style={{ width: 28, height: 28, fontSize: 11, flexShrink: 0 }}>{getMember(msg.sender).initials}</div>}
+              <div>
+                {!isMe && <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 3 }}>{msg.name}</div>}
+                <div className={`chat-bubble ${isMe ? 'mine' : 'theirs'}`}>{msg.text}</div>
+                <div style={{ fontSize: 10, color: 'var(--text-light)', marginTop: 3 }}>{msg.time}</div>
+              </div>
+            </div>
+          );
+        })}
+        <div ref={messagesEndRef} />
       </div>
+
+      {/* Input */}
+      <div className="chat-input-row">
+        <input
+          className="chat-input"
+          placeholder={`Message ${activeRoom.name}...`}
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && sendMessage()}
+        />
+        <button className="chat-send" onClick={sendMessage}>Send</button>
+      </div>
+    </div>
+  ) : (
+    <div className="chat-main-panel" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: 14 }}>
+      Select a chat to start
+    </div>
+  );
+
+  return (
+    <div className={`chat-screen-wrap${mobileView === 'chat' ? ' mobile-chat-open' : ''}`}>
+      {ListPanel}
+      {ChatWindow}
     </div>
   );
 }
@@ -1541,10 +1742,9 @@ function App() {
           )}
           {screen === 'chat' && (
             <ChatScreen
-              chatMessages={chatMessages}
-              setChatMessages={setChatMessages}
               members={members}
               showToast={showToast}
+              onOpenModal={openModal}
             />
           )}
           {screen === 'detect' && (
