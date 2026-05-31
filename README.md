@@ -6,61 +6,29 @@
 
 ## What is Taro?
 
-Taro is an AI-first shared expense coordination app built for friend groups, travel trips, and shared households. It automatically detects shared expenses from transactions, emails, and chat messages, then helps the group settle up with minimal friction.
+Taro is an AI-first shared expense coordination app for friend groups, travel trips, and shared households. It automatically detects shared expenses from transactions, emails, and chat messages, then helps the group settle up with minimal friction.
 
-This repository contains a **GitHub Pages prototype** — a fully interactive frontend demo built with vanilla HTML, CSS, and JavaScript. No backend, no real payments, all mock data.
-
----
-
-## The problem it solves
-
-Managing shared expenses in friend groups is painful:
-- Forgetting to log who paid for what
-- Chasing people for payment weeks after the fact
-- Awkward conversations about money
-- Manual spreadsheet tracking that nobody keeps up to date
-
-Taro makes shared expenses effortless by detecting them automatically and coordinating settlement for you.
+This repository is a **GitHub Pages prototype** — a fully interactive React frontend demo. No backend, no real payments, all mock data.
 
 ---
 
-## How the Taro AI Agent works
+## Tech Stack
 
-Taro has 7 core capabilities:
-
-1. **Transaction Detection** — Monitors your linked wallet for payments and suggests when they look shared (e.g. a restaurant charge for 5 people). Confidence scores show how certain Taro is.
-
-2. **Email / Booking Detection** — Reads Gmail confirmations (hotels, flights, tickets) and pre-fills expense details without any manual entry.
-
-3. **Chat Insight Extraction** — Reads group chat messages to detect expense-relevant mentions like "I'll pay first" or "only Sarah and I joined" and proposes split adjustments accordingly.
-
-4. **Call Transcript Analysis** (opt-in, on-device only) — With explicit consent, Taro listens locally for expense mentions during calls and extracts insights without uploading any audio.
-
-5. **Natural Language Q&A** — Ask Taro anything: "Why do I owe ₩17,500?", "Who still owes me?", "Split dinner without John" — and get plain-English answers with full calculation breakdowns.
-
-6. **Flexible Settlement Planning** — For people who can't pay right away, Taro offers structured options: pay later (grace period), installment plans, or partial settlements, all tracked automatically.
-
-7. **One-tap Group Settlement** — When everyone's ready, Taro settles all outstanding balances in a single confirmation, handles the notifications, and generates a trip summary.
+| Layer      | Technology                                               |
+|------------|----------------------------------------------------------|
+| UI         | React 18 (CDN) + Babel Standalone (no build step)        |
+| Styles     | Vanilla CSS — B&W Notion + sketch aesthetic              |
+| Fonts      | Google Fonts — Inter · Lora · JetBrains Mono             |
+| Logic      | JSX transpiled in-browser by Babel                       |
+| Hosting    | GitHub Pages (static)                                    |
+| Backend    | None                                                     |
+| Payments   | None (prototype only)                                    |
 
 ---
 
-## Screens
+## Running Locally
 
-| Screen | Description |
-|--------|-------------|
-| **AI Command Center** | Taro's main feed — pending suggestions, quick actions, recent activity |
-| **Wallet** | Balance, top-up/withdraw/transfer, auto-settlement settings, transaction history |
-| **Groups** | Jeju Trip overview — members, spending breakdown, settlement health bar |
-| **Chat** | Group chat with inline Taro expense detection |
-| **Detect** | All detection sources (wallet, email, chat, calls) + manual entry |
-| **Settle** | Balance summary, settlement scores, individual balance cards |
-| **Ask Taro** | Conversational AI Q&A about any expense or balance |
-
----
-
-## Running locally
-
-Just open `index.html` in any modern browser:
+Open `index.html` in any modern browser. No build step, no server, no installs.
 
 ```
 open index.html          # macOS
@@ -68,7 +36,7 @@ start index.html         # Windows
 xdg-open index.html      # Linux
 ```
 
-No build step, no server, no dependencies to install. Google Fonts (Inter) loads from CDN — you need an internet connection for the font to render correctly. Everything else is self-contained.
+You need an internet connection for CDN resources (React, Babel, Google Fonts).
 
 ---
 
@@ -80,48 +48,87 @@ No build step, no server, no dependencies to install. Google Fonts (Inter) loads
 4. Choose **main** branch, **/ (root)** folder
 5. Click **Save**
 
-Your app will be live at `https://<your-username>.github.io/<repo-name>/` within a minute or two.
+Live at `https://<your-username>.github.io/<repo-name>/` within a minute or two.
 
 ---
 
-## Tech stack
+## File Structure
 
-| Layer | Technology |
-|-------|-----------|
-| Markup | Semantic HTML5 |
-| Styling | Vanilla CSS (custom properties, grid, flexbox, animations) |
-| Logic | Vanilla JavaScript (ES6+, no frameworks, no bundler) |
-| Font | Google Fonts — Inter (300, 400, 500, 600, 700, 800) |
-| Icons | Unicode emoji + inline SVG (Taro mascot) |
-| Hosting | GitHub Pages (static) |
-| Backend | None |
-| Payments | None (prototype only) |
+```
+index.html   — minimal shell: CDN scripts, <div id="root">
+style.css    — B&W Notion + sketch design system
+app.js       — entire React app in JSX (Babel transpiles in browser)
+README.md    — this file
+```
 
 ---
 
-## Prototype disclaimer
+## Screens
+
+| Screen       | Description                                                      |
+|--------------|------------------------------------------------------------------|
+| **Home**     | AI suggestion feed, quick commands, recent activity              |
+| **Wallet**   | Balance, top-up/withdraw/transfer, auto-settle settings, history |
+| **Groups**   | Group list + detail view with members, categories, settle health |
+| **Chat**     | Group chat with inline Taro expense detection                    |
+| **Detect**   | Detection sources (wallet, email, chat, calls) + manual entry    |
+| **Settle**   | Friend list balances, settlement scores, individual settle flows |
+| **Ask Taro** | Conversational AI Q&A about expenses and balances                |
+
+---
+
+## Design System
+
+**B&W Notion + Doodle Minimalism**
+
+- Background: `#FAFAF8` (warm off-white)
+- Text: `#1A1A1A`
+- Borders: `2px solid #1A1A1A` (strong, sketch-feel)
+- Cards: `box-shadow: 3px 3px 0 #1A1A1A` (hard shadow = doodle aesthetic)
+- Status colors: muted green / orange / red (for meaning only)
+- No purple palette — full B&W
+
+Fonts:
+- **Lora** (serif) — headings and screen titles
+- **Inter** (sans-serif) — UI elements and body text
+- **JetBrains Mono** (monospace) — amounts and codes
+
+---
+
+## AI Flows Demonstrated
+
+1. **Transaction Detection** — Wallet charges surfaced as suggestions with confidence scores
+2. **Email Detection** — Hotel/flight booking confirmations parsed into expense records
+3. **Chat Insight Extraction** — "Only Julia and Sarah joined" → split adjustment proposed
+4. **Call Transcript Analysis** — Opt-in, on-device only (shown as locked/coming soon)
+5. **Natural Language Q&A** — Pre-scripted responses for 8 demo questions
+6. **Flexible Settlement** — Pay later / installments / partial amount options
+7. **One-tap Group Settlement** — Approve all pending balances simultaneously
+
+---
+
+## Interactive Features
+
+- Wallet balance updates live when approving settlements, topping up, or withdrawing
+- Expense participants are togglable (click to include/exclude from split)
+- Auto-settle limit is configurable with preset buttons
+- Group detail view shows members, category bars, and settlement health bar
+- Chat sends new messages; expense keywords trigger a Taro insight card
+- All modals close on overlay click or Cancel
+- Toast notifications confirm every action
+
+---
+
+## Prototype Disclaimer
 
 This is a **demonstration prototype** only.
 
 - All data is mock/fictional — no real transactions, balances, or users
 - No real payments are processed or initiated
 - No real email, wallet, or phone integrations exist
-- The Taro AI responses are pre-written strings, not a live model
+- Taro AI responses are pre-written strings, not a live model
 - Wallet balances update locally in memory and reset on page reload
-- This app does not connect to any external APIs or services
-
-The prototype is intended to demonstrate UX flows, design language, and the core product concept of 따로따로.
 
 ---
 
-## Design system
-
-The app uses a lavender/purple palette defined as CSS custom properties in `style.css`. Primary color is `#7C5CBF` (purple). The Taro mascot is an inline SVG character that appears throughout the UI.
-
-Font: **Inter** from Google Fonts at weights 300–800.
-
-Card style: `border-radius: 16px`, white background, subtle purple-tinted drop shadow.
-
----
-
-*따로따로 · Taro · v0.1 prototype*
+*따로따로 · Taro · v0.2 prototype*
