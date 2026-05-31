@@ -1,8 +1,8 @@
-# 따로따로 · tttaro-ttaro-tttaro-ttaro — Split Bill AI Agent
+# 따로따로 · ttaro-ttaro — Split Bill AI Agent
 
-> **따로따로** (romanized: *tttaro-ttaro tttaro-ttaro*) means “separately” in Korean — the idea that everyone’s share is tracked precisely, separately, and fairly.
+> **따로따로** (romanized: *ttaro-ttaro*) means “separately” in Korean — the idea that everyone’s share is tracked precisely, separately, and fairly.
 
-tttaro-ttaro-tttaro-ttaro is an AI agent that acts as a group treasurer that detects, splits, explains, reminds, and settles shared expenses between friends, especially during trips, meals, outings, and temporary group activities with human approval (human-in-the-loop).
+따로따로 is an AI agent that acts as a group treasurer that detects, splits, explains, reminds, and settles shared expenses between friends, especially during trips, meals, outings, and temporary group activities with human approval (human-in-the-loop).
 
 Check out the [Live Web Prototype](https://ttaro-ttaro.vercel.app/).
 
@@ -51,9 +51,9 @@ Instead of waiting for users to manually enter every expense, an AI agent could 
 
 ## Proposed Solution
 
-ttaro-ttaro is an AI agent that acts as a group treasurer.
+따로따로 is an AI agent that acts as a group treasurer.
 
-Instead of only helping users calculate debts, ttaro-ttaro helps with the full shared-expense process:
+Instead of only helping users calculate debts, 따로따로 helps with the full shared-expense process:
 
 - detecting possible shared expenses
 - understanding group context
@@ -64,13 +64,13 @@ Instead of only helping users calculate debts, ttaro-ttaro helps with the full s
 - coordinating settlement through an in-app wallet
 - keeping users in control through approval before important actions
 
-The goal is to let ttaro-ttaro handle the repetitive and socially uncomfortable parts, while the user stays in control.
+The goal is to let 따로따로 handle the repetitive and socially uncomfortable parts, while the user stays in control.
 
 ---
 
 ## Who This Is For (Target Audience)
 
-ttaro-ttaro is designed for **small social groups of 3–8 people** who frequently share expenses during trips, outings, or temporary group activities.
+따로따로 is designed for **small social groups of 3–8 people** who frequently share expenses during trips, outings, or temporary group activities.
 
 Examples include:
 
@@ -109,7 +109,7 @@ Current solutions usually help with tracking or calculation, but users still nee
 - manage delayed payments
 - handle awkward conversations
 
-ttaro-ttaro explores how AI can help with the coordination layer, not just the calculation layer.
+따로따로 explores how AI can help with the coordination layer, not just the calculation layer.
 
 ---
 
@@ -117,21 +117,21 @@ ttaro-ttaro explores how AI can help with the coordination layer, not just the c
 
 ### 1. AI Expense Detection
 
-ttaro-ttaro detects possible shared expenses from mock wallet transactions.
+따로따로 detects possible shared expenses from mock wallet transactions.
 
 Example:
 
 Julia pays ₩50,000 at a cafe.  
 A normal cafe expense might be around ₩10,000 per person.  
-ttaro-ttaro detects that this may be a group expense and asks whether it should be split with friends.
+따로따로 detects that this may be a group expense and asks whether it should be split with friends.
 
 ---
 
 ### 2. Human-in-the-Loop Approval
 
-ttaro-ttaro can detect, suggest, explain, and prepare actions.
+따로따로 can detect, suggest, explain, and prepare actions.
 
-However, ttaro-ttaro must ask for user approval before:
+However, 따로따로 must ask for user approval before:
 
 - creating a shared expense
 - assigning debt to friends
@@ -157,7 +157,7 @@ Users can see:
 - transaction history
 - pending balances
 
-After approval, ttaro-ttaro simulates automatic wallet-based settlement.
+After approval, 따로따로 simulates automatic wallet-based settlement.
 
 Example:
 
@@ -171,14 +171,14 @@ After approval, the app simulates transfers from each friend’s wallet to Julia
 
 The prototype includes mock group and individual chats.
 
-ttaro-ttaro can detect messages such as:
+따로따로 can detect messages such as:
 
 - “I’ll pay first.”
 - “Let’s split later.”
 - “Only Sarah and I joined.”
 - “John wasn’t there.”
 
-This helps ttaro-ttaro suggest more accurate splits.
+This helps 따로따로 suggest more accurate splits.
 
 ---
 
@@ -190,7 +190,7 @@ Example transcript from voice call:
 
 > “Sarah and Julia joined the cafe, but John and Alex did not.”
 
-ttaro-ttaro uses this context to suggest that John and Alex should be excluded from the cafe split.
+따로따로 uses this context to suggest that John and Alex should be excluded from the cafe split.
 
 ---
 
@@ -202,7 +202,7 @@ Example email booking summary:
 
 > Hotel booking confirmed — ₩240,000 — 4 guests
 
-ttaro-ttaro can suggest adding the booking to the trip wallet and splitting it among the correct members.
+따로따로 can suggest adding the booking to the trip wallet and splitting it among the correct members.
 
 ---
 
@@ -223,7 +223,7 @@ This creates gentle accountability without directly shaming users.
 
 ### 8. Settlement Score
 
-ttaro-ttaro can show mock repayment reliability indicators such as:
+따로따로 can show mock repayment reliability indicators such as:
 
 - 98% on-time payments
 - reliable payer
@@ -238,7 +238,7 @@ The purpose is to encourage repayment through soft accountability.
 
 Not every unpaid balance is caused by bad intention.
 
-If someone cannot pay immediately, ttaro-ttaro can suggest:
+If someone cannot pay immediately, 따로따로 can suggest:
 
 - pay later
 - partial payment
@@ -251,13 +251,13 @@ This helps reduce awkwardness while keeping the debt visible.
 
 ### 10. AI Explanation
 
-Users can ask ttaro-ttaro:
+Users can ask 따로따로:
 
 - “Why do I owe ₩17,500?”
 - “Who still owes me?”
 - “How was this split?”
 
-ttaro-ttaro explains the calculation clearly.
+따로따로 explains the calculation clearly.
 
 Example:
 
