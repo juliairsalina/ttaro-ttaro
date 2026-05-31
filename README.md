@@ -4,7 +4,7 @@
 
 tttaro-ttaro-tttaro-ttaro is an AI agent that acts as a group treasurer that detects, splits, explains, reminds, and settles shared expenses between friends, especially during trips, meals, outings, and temporary group activities with human approval (human-in-the-loop).
 
-[![Deploy with Vercel](https://vercel.com)](https://ttaro-ttaro.vercel.app/)
+[![Deploy with Vercel](https://ttaro-ttaro.vercel.app/)]
 
 ![Web Preview](preview.png)
 
