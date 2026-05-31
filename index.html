@@ -35,6 +35,7 @@ const MOCK_EXPENSES = [
   { id: 'taxi',    merchant: 'KakaoTaxi',         amount: 18000,  category: 'Transport',     payer: 'minho', participants: ['julia','sarah','minho'],              perPerson: 6000,  date: 'Today 1:20 PM',  status: 'pending',  icon: '🚕' },
   { id: 'hotel',   merchant: 'Jeju Shilla Hotel', amount: 240000, category: 'Accommodation', payer: 'julia', participants: ['julia','sarah','alex','minho'],       perPerson: 60000, date: 'Jun 15',         status: 'pending',  icon: '🏨' },
   { id: 'dinner',  merchant: 'Jeju Black Pork',   amount: 75000,  category: 'Food',          payer: 'sarah', participants: ['julia','sarah','alex','john','minho'], perPerson: 15000, date: 'Jun 15',         status: 'settled',  icon: '🍖' },
+  { id: 'ferry',   merchant: 'Jeju Ferry',         amount: 80000,  category: 'Transport',     payer: 'sarah', participants: ['julia','sarah'],                      perPerson: 40000, date: 'Jun 14',         status: 'pending',  icon: '⛴', juliaSettled: false },
   { id: 'tickets', merchant: 'Jeju Stone Park',   amount: 80000,  category: 'Activities',    payer: 'julia', participants: ['julia','sarah','alex','minho'],       perPerson: 20000, date: 'Jun 16',         status: 'pending',  icon: '🎡' },
   { id: 'flight',  merchant: 'Jeju Air KE121',    amount: 375000, category: 'Transport',     payer: 'julia', participants: ['julia','sarah','alex','john','minho'], perPerson: 75000, date: 'Jun 15',         status: 'settled',  icon: '✈' },
 ];
@@ -271,7 +272,27 @@ function ProtoBanner({ onClose }) {
 // ─── Home Screen ─────────────────────────────────────
 
 function HomeScreen({ expenses, members, dismissedCards, onDismiss, onOpenModal, walletBalance, onNavigate, showToast }) {
-  const suggestions = [
+  const getMember = id => members.find(m => m.id === id);
+
+  // Compute what Julia owes to others (she is participant but not payer, expense not settled by her)
+  const juliaDebts = expenses.filter(e =>
+    e.payer !== 'julia' && e.participants.includes('julia') && !e.juliaSettled && e.status !== 'settled'
+  ).map(e => ({ ...e, amount: e.perPerson }));
+
+  // Auto-settle suggestion cards for debts over ₩30,000
+  const autoSettleCards = juliaDebts
+    .filter(d => d.perPerson > 30000 && !dismissedCards.has(`auto-settle-${d.id}`))
+    .map(d => ({
+      id: `auto-settle-${d.id}`,
+      type: 'type-warning',
+      icon: '◈',
+      title: `You owe ${getMember(d.payer)?.name} ${fmt(d.perPerson)} · ${d.merchant}`,
+      meta: `Over ₩30,000 limit — Taro needs your approval before auto-settling`,
+      primary: { label: 'Approve & Settle', action: () => onOpenModal('julia-settle', d) },
+      secondary: { label: 'Later', action: () => onDismiss(`auto-settle-${d.id}`) },
+    }));
+
+  const suggestions = [...autoSettleCards,
     {
       id: 'cafe-detect',
       type: 'type-wallet',
@@ -945,6 +966,13 @@ function DetectScreen({ expenses, onOpenModal, showToast }) {
 function SettleScreen({ members, setMembers, expenses, setExpenses, setTransactions, walletBalance, setWalletBalance, onOpenModal, showToast }) {
   const others = members.filter(m => m.id !== 'julia');
   const totalOwed = others.reduce((sum, m) => sum + m.owes, 0);
+  const getMember = id => members.find(m => m.id === id);
+
+  // What Julia owes others
+  const juliaDebts = expenses.filter(e =>
+    e.payer !== 'julia' && e.participants.includes('julia') && !e.juliaSettled && e.status !== 'settled'
+  );
+  const totalJuliaOwes = juliaDebts.reduce((sum, e) => sum + e.perPerson, 0);
 
   return (
     <div className="screen">
@@ -984,6 +1012,50 @@ function SettleScreen({ members, setMembers, expenses, setExpenses, setTransacti
             </div>
           </div>
         </div>
+      )}
+
+      {juliaDebts.length > 0 && (
+        <>
+          <div className="section-heading">You Owe</div>
+          <div style={{ border: '2px solid var(--border)', borderRadius: 8, overflow: 'hidden', marginBottom: 14, boxShadow: 'var(--shadow-sm)' }}>
+            {juliaDebts.map(e => {
+              const payer = getMember(e.payer);
+              const isOver = e.perPerson > 30000;
+              return (
+                <div key={e.id} className="friend-row" style={{ background: isOver ? '#FFFAF5' : 'white' }}>
+                  <div className="avatar" style={{ background: isOver ? 'var(--orange-bg)' : undefined }}>{e.icon}</div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontWeight: 600, fontSize: 13 }}>{e.merchant}</div>
+                    <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 1 }}>
+                      {e.date} · paid by {payer?.name}
+                    </div>
+                    {isOver && (
+                      <div style={{ fontSize: 11, color: 'var(--orange)', fontWeight: 600, marginTop: 2 }}>
+                        Over ₩30,000 — approval required
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span className="amount" style={{ fontWeight: 700, fontSize: 13, color: isOver ? 'var(--orange)' : 'var(--text)' }}>
+                      {fmt(e.perPerson)}
+                    </span>
+                    <button
+                      className={`btn ${isOver ? 'btn-primary' : 'btn'}`}
+                      style={{ fontSize: 11, padding: '4px 12px' }}
+                      onClick={() => onOpenModal('julia-settle', e)}
+                    >
+                      {isOver ? 'Approve' : 'Settle'}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+            <div style={{ padding: '10px 16px', background: '#F5F5F3', borderTop: '1px solid var(--border-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Total you owe</span>
+              <span className="amount" style={{ fontWeight: 700, fontSize: 14 }}>{fmt(totalJuliaOwes)}</span>
+            </div>
+          </div>
+        </>
       )}
 
       <div className="section-heading">Balances</div>
@@ -1155,6 +1227,11 @@ function ModalRenderer({ modal, onClose, members, setMembers, expenses, setExpen
   // ── Wallet Settle (individual) ──
   if (type === 'wallet-settle' && data) {
     return <WalletSettleModal member={data} onClose={onClose} members={members} setMembers={setMembers} walletBalance={walletBalance} setWalletBalance={setWalletBalance} setTransactions={setTransactions} showToast={showToast} />;
+  }
+
+  // ── Julia Auto-Settle (she owes someone) ──
+  if (type === 'julia-settle' && data) {
+    return <JuliaSettleModal expense={data} onClose={onClose} walletBalance={walletBalance} setWalletBalance={setWalletBalance} setExpenses={setExpenses} setTransactions={setTransactions} showToast={showToast} members={members} />;
   }
 
   // ── Settle All Modal ──
@@ -1892,6 +1969,119 @@ function SettleAllModal({ onClose, members, setMembers, walletBalance, setWallet
         <div style={{ display: 'flex', gap: 10 }}>
           <button className="btn btn-primary" style={{ flex: 1, justifyContent: 'center' }} onClick={settleAll}>
             Approve All ({fmt(totalSettleable)})
+          </button>
+          <button className="btn btn-ghost" onClick={onClose}>Cancel</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Julia Auto-Settle Modal ──
+
+function JuliaSettleModal({ expense, onClose, walletBalance, setWalletBalance, setExpenses, setTransactions, showToast, members }) {
+  const [step, setStep] = useState('review'); // 'review' | 'done'
+  const payer = members.find(m => m.id === expense.payer);
+  const isOver = expense.perPerson > 30000;
+  const canAfford = walletBalance >= expense.perPerson;
+
+  const approve = () => {
+    if (!canAfford) { showToast('Insufficient wallet balance'); return; }
+    setWalletBalance(prev => prev - expense.perPerson);
+    setExpenses(prev => prev.map(e => e.id === expense.id ? { ...e, juliaSettled: true } : e));
+    setTransactions(prev => [{
+      id: Date.now(),
+      desc: `Settled: ${expense.merchant} → ${payer?.name}`,
+      amount: -expense.perPerson,
+      type: 'out',
+      date: 'Just now',
+      icon: expense.icon || '◈',
+    }, ...prev]);
+    setStep('done');
+  };
+
+  if (step === 'done') {
+    return (
+      <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+        <div className="modal-box">
+          <button className="modal-close" onClick={onClose}>✕</button>
+          <div style={{ textAlign: 'center', marginBottom: 20 }}>
+            <div style={{ fontSize: 36, marginBottom: 10 }}>✓</div>
+            <div className="modal-title" style={{ marginBottom: 4 }}>Settled!</div>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+              {fmt(expense.perPerson)} sent to {payer?.name} · Just now
+            </div>
+          </div>
+          <div style={{ background: 'var(--green-bg)', border: '1px solid var(--green)', borderRadius: 8, padding: '12px 14px', marginBottom: 20 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+              <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--green)' }}>{expense.merchant}</span>
+              <span className="amount" style={{ fontWeight: 700, color: 'var(--green)' }}>{fmt(expense.perPerson)}</span>
+            </div>
+            <div style={{ fontSize: 12, color: 'var(--green)' }}>
+              Wallet: {fmt(walletBalance)} remaining
+            </div>
+          </div>
+          <button className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }} onClick={onClose}>Done</button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="modal-box">
+        <button className="modal-close" onClick={onClose}>✕</button>
+        <div className="modal-title">Settle Your Debt</div>
+        <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 20 }}>Taro detected an outstanding balance</div>
+
+        {isOver && (
+          <div style={{ background: 'var(--orange-bg)', border: '1px solid var(--orange)', borderRadius: 6, padding: '10px 14px', marginBottom: 16, display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+            <span>⚠</span>
+            <div style={{ fontSize: 12, color: 'var(--orange)' }}>
+              <strong>Approval required.</strong> This amount ({fmt(expense.perPerson)}) exceeds your ₩30,000 auto-settle limit. Your confirmation is needed before Taro transfers funds.
+            </div>
+          </div>
+        )}
+
+        <div style={{ background: '#F5F5F3', border: '1.5px solid var(--border-light)', borderRadius: 8, padding: '14px 16px', marginBottom: 20 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: 15 }}>{expense.icon} {expense.merchant}</div>
+              <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>{expense.date}</div>
+            </div>
+            <div className="amount" style={{ fontSize: 22, fontWeight: 700 }}>{fmt(expense.perPerson)}</div>
+          </div>
+          <div className="divider" />
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+            <span style={{ color: 'var(--text-muted)' }}>Pay to</span>
+            <span style={{ fontWeight: 600 }}>{payer?.name}</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginTop: 6 }}>
+            <span style={{ color: 'var(--text-muted)' }}>From</span>
+            <span style={{ fontWeight: 600 }}>Taro Wallet</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginTop: 6 }}>
+            <span style={{ color: 'var(--text-muted)' }}>Wallet after</span>
+            <span style={{ fontWeight: 600, color: canAfford ? 'var(--green)' : 'var(--red)' }}>
+              {fmt(Math.max(0, walletBalance - expense.perPerson))}
+            </span>
+          </div>
+        </div>
+
+        {!canAfford && (
+          <div style={{ background: 'var(--red-bg)', border: '1px solid var(--red)', borderRadius: 6, padding: '10px 14px', marginBottom: 16, fontSize: 12, color: 'var(--red)' }}>
+            Insufficient balance. Top up {fmt(expense.perPerson - walletBalance)} more to proceed.
+          </div>
+        )}
+
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button
+            className="btn btn-primary"
+            style={{ flex: 1, justifyContent: 'center', opacity: canAfford ? 1 : 0.5 }}
+            onClick={approve}
+            disabled={!canAfford}
+          >
+            {isOver ? 'Approve & Settle' : 'Settle Now'}
           </button>
           <button className="btn btn-ghost" onClick={onClose}>Cancel</button>
         </div>
