@@ -50,22 +50,21 @@
 
     <ul class="nav-list">
       <li class="nav-item active" data-screen="home" onclick="navigateTo('home')">
-        <span class="nav-icon">✦</span> AI Command Center
-        <span class="nav-badge">5</span>
+        <span class="nav-icon">✦</span> Home
+        <span class="nav-dot" id="nav-dot-home"></span>
       </li>
       <li class="nav-item" data-screen="wallet" onclick="navigateTo('wallet')">
         <span class="nav-icon">💳</span> Wallet
       </li>
       <li class="nav-item" data-screen="groups" onclick="navigateTo('groups')">
-        <span class="nav-icon">✈</span> Groups
-        <span class="nav-badge">3</span>
+        <span class="nav-icon">✈</span> Jeju Trip
       </li>
       <li class="nav-item" data-screen="chat" onclick="navigateTo('chat')">
         <span class="nav-icon">💬</span> Chat
+        <span class="nav-dot"></span>
       </li>
       <li class="nav-item" data-screen="detect" onclick="navigateTo('detect')">
-        <span class="nav-icon">🔍</span> Detect
-        <span class="nav-badge">7</span>
+        <span class="nav-icon">🔍</span> Detected
       </li>
       <li class="nav-item" data-screen="settle" onclick="navigateTo('settle')">
         <span class="nav-icon">⚖</span> Settle
@@ -76,12 +75,7 @@
     </ul>
 
     <div class="sidebar-footer">
-      <div class="consent-badges">
-        <span class="consent-badge">🔒 End-to-end encrypted</span>
-        <span class="consent-badge">🛡 GDPR compliant</span>
-        <span class="consent-badge">👤 Data you own</span>
-      </div>
-      <div class="sidebar-version">v0.1 prototype</div>
+      <div class="sidebar-version">따로따로 · v0.1 prototype</div>
     </div>
   </aside>
 
@@ -102,25 +96,13 @@
               <span class="sugg-icon">☕</span>
               <div>
                 <div class="sugg-title">Cafe Bloom <span class="sugg-amount">₩50,000</span></div>
-                <div class="sugg-meta">Split 5 ways · <strong>₩10,000 each</strong></div>
+                <div class="sugg-meta">Possible group expense · 5 people · ₩10,000 each</div>
               </div>
             </div>
-            <div class="sugg-tags">
-              <span class="tag tag-detect">Transaction Detected</span>
-              <span class="confidence-badge">87% confidence</span>
-            </div>
-          </div>
-          <div class="sugg-participants">
-            <span class="chip">J · Julia</span>
-            <span class="chip">S · Sarah</span>
-            <span class="chip">A · Alex</span>
-            <span class="chip">M · Minho</span>
-            <span class="chip">J · John</span>
           </div>
           <div class="sugg-actions">
-            <button class="btn btn-approve" onclick="openApprovalModal('cafe')">✓ Review &amp; Approve</button>
-            <button class="btn btn-edit" onclick="openApprovalModal('cafe', true)">✎ Edit</button>
-            <button class="btn btn-dismiss" onclick="dismissSuggestion('cafe')">✕ Dismiss</button>
+            <button class="btn btn-approve" onclick="openApprovalModal('cafe')">Review &amp; split</button>
+            <button class="btn btn-dismiss" onclick="dismissSuggestion('cafe')">Dismiss</button>
           </div>
         </div>
 
@@ -131,22 +113,12 @@
               <span class="sugg-icon">🏨</span>
               <div>
                 <div class="sugg-title">Jeju Shilla Hotel <span class="sugg-amount">₩240,000</span></div>
-                <div class="sugg-meta">Split 4 ways · <strong>₩60,000 each</strong></div>
+                <div class="sugg-meta">Booking email detected · 4 guests · ₩60,000 each</div>
               </div>
             </div>
-            <div class="sugg-tags">
-              <span class="tag tag-email">Email Detected · Gmail</span>
-            </div>
-          </div>
-          <div class="sugg-participants">
-            <span class="chip">J · Julia</span>
-            <span class="chip">S · Sarah</span>
-            <span class="chip">A · Alex</span>
-            <span class="chip">M · Minho</span>
           </div>
           <div class="sugg-actions">
-            <button class="btn btn-approve" onclick="openApprovalModal('hotel')">✓ Add to Jeju Trip</button>
-            <button class="btn btn-edit" onclick="openApprovalModal('hotel', true)">✎ Edit</button>
+            <button class="btn btn-approve" onclick="openApprovalModal('hotel')">Add to Jeju Trip</button>
             <button class="btn btn-dismiss" onclick="dismissSuggestion('hotel')">Dismiss</button>
           </div>
         </div>
@@ -157,17 +129,13 @@
             <div class="sugg-left">
               <span class="sugg-icon">⚠</span>
               <div>
-                <div class="sugg-title">John · Outstanding Balance <span class="sugg-amount" style="color:var(--red)">₩100,000</span></div>
-                <div class="sugg-meta" style="color:var(--red)">Overdue · 7 days past due</div>
+                <div class="sugg-title">John owes <span class="sugg-amount" style="color:var(--red)">₩100,000</span></div>
+                <div class="sugg-meta">7 days overdue · from Jeju Trip</div>
               </div>
-            </div>
-            <div class="sugg-tags">
-              <span class="tag tag-warning">Overdue</span>
             </div>
           </div>
           <div class="sugg-actions">
-            <button class="btn btn-approve" onclick="openReminderModal('john')">✉ Draft Reminder</button>
-            <button class="btn btn-edit" onclick="showFlexibleRepayment('john')">⟳ Flexible Repayment</button>
+            <button class="btn btn-approve" onclick="openReminderModal('john')">Send reminder</button>
             <button class="btn btn-dismiss" onclick="dismissSuggestion('john')">Later</button>
           </div>
         </div>
@@ -178,18 +146,13 @@
             <div class="sugg-left">
               <span class="sugg-icon">💬</span>
               <div>
-                <div class="sugg-title">Chat Insight: Cafe Bloom</div>
-                <div class="sugg-meta">"Only Sarah and I joined the cafe" — update split to 2 people</div>
+                <div class="sugg-title">Cafe Bloom split needs updating</div>
+                <div class="sugg-meta">"Only Sarah and I joined" · ₩25,000 each × 2 (was ₩10,000 × 5)</div>
               </div>
             </div>
-            <div class="sugg-tags">
-              <span class="tag tag-chat">Chat Insight</span>
-            </div>
           </div>
-          <div class="insight-quote">"We went to Cafe Bloom earlier. Only Sarah and I joined btw" — Julia, 2:40 PM</div>
-          <div class="sugg-meta" style="margin-top:6px">New split: ₩25,000 each × 2 people (was ₩10,000 × 5)</div>
           <div class="sugg-actions">
-            <button class="btn btn-approve" onclick="approveChatInsight()">✓ Update Split</button>
+            <button class="btn btn-approve" onclick="approveChatInsight()">Update split</button>
             <button class="btn btn-dismiss" onclick="dismissSuggestion('chatinsight')">Keep original</button>
           </div>
         </div>
@@ -200,16 +163,13 @@
             <div class="sugg-left">
               <span class="sugg-icon">💳</span>
               <div>
-                <div class="sugg-title">Wallet Below Group Minimum</div>
-                <div class="sugg-meta">After debts: ₩45,000 vs ₩50,000 minimum required</div>
+                <div class="sugg-title">Wallet near group minimum</div>
+                <div class="sugg-meta">Net balance after debts: ₩45,000 · Jeju Trip requires ₩50,000</div>
               </div>
-            </div>
-            <div class="sugg-tags">
-              <span class="tag" style="background:var(--lilac);color:var(--purple-dark)">Notice</span>
             </div>
           </div>
           <div class="sugg-actions">
-            <button class="btn btn-primary" onclick="openTopUpModal()">+ Top Up</button>
+            <button class="btn btn-approve" onclick="openTopUpModal()">Top up wallet</button>
             <button class="btn btn-dismiss" onclick="dismissSuggestion('wallet')">Dismiss</button>
           </div>
         </div>
