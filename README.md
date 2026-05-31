@@ -2,6 +2,8 @@
 
 > **따로따로** (romanized: *ttaro-ttaro*) means “separately” in Korean — the idea that everyone’s share is tracked precisely, separately, and fairly.
 
+Across cultures, people have everyday words for splitting costs: 따로따로(ttaro-ttaro), 別々 / べつべつ (betsu-betsu), half-half, asing-asing, ครึ่ง-ครึ่ง (khrueng-khrueng), AA制 (AA zhì), and பாதி பாதி (paadhi paadhi). This shows that sharing expenses is universal, but the experience is still often awkward and manual.
+
 따로따로 is an AI agent that acts as a group treasurer that detects, splits, explains, reminds, and settles shared expenses between friends, especially during trips, meals, outings, and temporary group activities with human approval (human-in-the-loop).
 
 Check out the [Live Web Prototype](https://ttaro-ttaro.vercel.app/).
