@@ -352,3 +352,17 @@ Then
 ```text
 open index.html
 ```
+
+## 11. My Reflection
+
+The biggest realization from this project is that the real pain is not only about math. At first, I thought the problem was about splitting bills faster, but the issue is more two-sided: people do not want to be the person who pays for everything and never gets paid back, and they also do not want to accidentally become the friend who forgets to repay others and loses trust.
+
+That is why I framed Taro as a split bill agent instead of just another bill-splitting app. The problem is not only “how much does everyone owe?”, but also “who records it?”, “who reminds people?”, and “who keeps track when someone forgets?”
+
+Manual entry also becomes more annoying than it sounds. During trips, small transactions happen repeatedly: cafes, taxis, tickets, meals, and bookings. People are already used to fast and automated services, especially in environments like South Korea where 빨리빨리 culture values quick and efficient workflows. Compared to that, shared expense tracking still feels very manual.
+
+Taro is meant to reduce that burden without making users feel aggressive or calculative. It helps notice possible shared expenses, organize them, explain balances, draft reminders, and show settlement status clearly. The goal is to protect fairness and reduce awkward repayment conversations.
+
+At the same time, money requires trust. That is why human-in-the-loop approval is important. Taro can detect, suggest, explain, and prepare actions, but the user should always approve before money is moved or messages are sent.
+
+Through this project, my thinking changed from “make splitting bills faster” to “make shared money easier, fairer, and less socially uncomfortable.” The current prototype is still limited and uses mock data, but it helped make the idea tangible and test how the flow might feel.
