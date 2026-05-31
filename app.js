@@ -290,7 +290,7 @@ function HomeScreen({ expenses, members, dismissedCards, onDismiss, onOpenModal,
       icon: '💬',
       title: 'Chat: "Only Sarah and I joined"',
       meta: 'Taro suggests splitting Cafe Bloom 2-ways → ₩25,000 each',
-      primary: { label: 'Update split', action: () => { showToast('Split updated: Cafe Bloom → 2 people'); onDismiss('chat-cafe'); } },
+      primary: { label: 'Update split', action: () => { onOpenModal('split-update', { expenseId: 'cafe' }); onDismiss('chat-cafe'); } },
       secondary: { label: 'Ignore', action: () => onDismiss('chat-cafe') },
     },
     {
@@ -763,7 +763,18 @@ function ChatScreen({ members, showToast, onOpenModal }) {
                   <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 }}>{msg.taroInsight.text}</div>
                   <div style={{ display: 'flex', gap: 8 }}>
                     <button className="btn btn-primary" style={{ fontSize: 11, padding: '4px 12px' }}
-                      onClick={() => { showToast(msg.taroInsight.actionLabel); dismissInsight(`msg-${msg.id}`); }}>
+                      onClick={() => {
+                        if (msg.taroInsight.actionLabel === 'Update split') {
+                          onOpenModal('split-update', { expenseId: 'cafe' });
+                          dismissInsight(`msg-${msg.id}`);
+                        } else if (msg.taroInsight.actionLabel === 'Create expense draft' || msg.taroInsight.actionLabel === 'Create expense') {
+                          onOpenModal('add-manually', {});
+                          dismissInsight(`msg-${msg.id}`);
+                        } else {
+                          showToast(msg.taroInsight.actionLabel);
+                          dismissInsight(`msg-${msg.id}`);
+                        }
+                      }}>
                       {msg.taroInsight.actionLabel}
                     </button>
                     <button className="btn btn-ghost" style={{ fontSize: 11, padding: '4px 12px' }} onClick={() => dismissInsight(`msg-${msg.id}`)}>Ignore</button>
@@ -879,10 +890,14 @@ function DetectScreen({ expenses, onOpenModal, showToast }) {
             {!item.locked ? (
               <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
                 <button className="btn btn-primary" style={{ fontSize: 11, padding: '4px 12px' }} onClick={() => {
-                  const exp = expenses.find(e => e.id === item.id);
-                  if (exp) onOpenModal('approval', exp);
-                  else showToast('Added to expenses');
-                }}>Add</button>
+                  if (item.id === 'chat-cafe') {
+                    onOpenModal('split-update', { expenseId: 'cafe' });
+                  } else {
+                    const exp = expenses.find(e => e.id === item.id);
+                    if (exp) onOpenModal('approval', exp);
+                    else showToast('Added to expenses');
+                  }
+                }}>{item.id === 'chat-cafe' ? 'Update Split' : 'Add'}</button>
                 <button className="btn btn-ghost" style={{ fontSize: 11, padding: '4px 12px' }} onClick={() => showToast('Dismissed')}>✕</button>
               </div>
             ) : (
@@ -894,8 +909,14 @@ function DetectScreen({ expenses, onOpenModal, showToast }) {
 
       <div className="section-heading">Add Manually</div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
-        {['Receipt photo', 'Enter amount', 'From bank', 'Import CSV'].map(label => (
-          <button key={label} className="btn" style={{ flexDirection: 'column', padding: '14px 8px', gap: 6, fontSize: 12, height: 'auto', textAlign: 'center' }} onClick={() => showToast(`${label} — coming soon`)}>
+        {[
+          { label: 'Receipt photo', icon: '📷', action: () => showToast('Receipt photo — coming soon') },
+          { label: 'Enter amount', icon: '✎', action: () => onOpenModal('add-manually', {}) },
+          { label: 'From bank', icon: '🏦', action: () => showToast('Bank import — coming soon') },
+          { label: 'Import CSV', icon: '📄', action: () => showToast('CSV import — coming soon') },
+        ].map(({ label, icon, action }) => (
+          <button key={label} className="btn" style={{ flexDirection: 'column', padding: '14px 8px', gap: 6, fontSize: 12, height: 'auto', textAlign: 'center' }} onClick={action}>
+            <span style={{ fontSize: 18 }}>{icon}</span>
             {label}
           </button>
         ))}
@@ -1091,6 +1112,16 @@ function ModalRenderer({ modal, onClose, members, setMembers, expenses, setExpen
     return <ReminderModal member={data} onClose={onClose} showToast={showToast} />;
   }
 
+  // ── Split Update Modal ──
+  if (type === 'split-update' && data) {
+    return <SplitUpdateModal expenseId={data.expenseId} onClose={onClose} expenses={expenses} setExpenses={setExpenses} members={members} setMembers={setMembers} showToast={showToast} />;
+  }
+
+  // ── Add Manually Modal ──
+  if (type === 'add-manually') {
+    return <AddManuallyModal onClose={onClose} expenses={expenses} setExpenses={setExpenses} members={members} setMembers={setMembers} setTransactions={setTransactions} walletBalance={walletBalance} setWalletBalance={setWalletBalance} showToast={showToast} />;
+  }
+
   // ── Top Up Modal ──
   if (type === 'topup') {
     return <TopUpModal onClose={onClose} walletBalance={walletBalance} setWalletBalance={setWalletBalance} setTransactions={setTransactions} showToast={showToast} />;
@@ -1272,10 +1303,40 @@ function ReminderModal({ member, onClose, showToast }) {
     'Formal': `Dear ${member.name}, this is a notice that ₩${member.owes.toLocaleString()} remains unsettled for the Jeju Trip shared expense group. Please arrange payment at your earliest convenience.`,
   };
   const [msg, setMsg] = useState(defaultMessages['Neutral']);
+  const [sent, setSent] = useState(false);
+  const sentTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 
   useEffect(() => {
     setMsg(defaultMessages[tone]);
   }, [tone]);
+
+  const sendReminder = () => {
+    setSent(true);
+  };
+
+  if (sent) {
+    return (
+      <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+        <div className="modal-box">
+          <button className="modal-close" onClick={onClose}>✕</button>
+          <div style={{ textAlign: 'center', marginBottom: 20 }}>
+            <div style={{ fontSize: 32, marginBottom: 10 }}>✓</div>
+            <div className="modal-title" style={{ marginBottom: 4 }}>Reminder Sent</div>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Delivered to {member.name} · {sentTime}</div>
+          </div>
+          <div style={{ background: '#F5F5F3', border: '1.5px solid var(--border-light)', borderRadius: 8, padding: '12px 14px', marginBottom: 20 }}>
+            <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Message delivered</div>
+            <div style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--text)' }}>{msg}</div>
+            <div style={{ fontSize: 11, color: 'var(--text-light)', marginTop: 8, textAlign: 'right' }}>Taro · {sentTime} · ✓✓ Read</div>
+          </div>
+          <div style={{ background: 'var(--green-bg)', border: '1px solid var(--green)', borderRadius: 6, padding: '10px 14px', marginBottom: 20, fontSize: 12, color: 'var(--green)' }}>
+            Taro will notify you when {member.name} responds or settles.
+          </div>
+          <button className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }} onClick={onClose}>Done</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
@@ -1304,7 +1365,7 @@ function ReminderModal({ member, onClose, showToast }) {
         </div>
 
         <div style={{ display: 'flex', gap: 10 }}>
-          <button className="btn btn-primary" style={{ flex: 1, justifyContent: 'center' }} onClick={() => { showToast(`Reminder sent to ${member.name}`, 'success'); onClose(); }}>
+          <button className="btn btn-primary" style={{ flex: 1, justifyContent: 'center' }} onClick={sendReminder}>
             Send Reminder
           </button>
           <button className="btn btn-ghost" onClick={onClose}>Cancel</button>
@@ -1315,6 +1376,202 @@ function ReminderModal({ member, onClose, showToast }) {
 }
 
 // ── Top-Up Modal ──
+
+// ── Split Update Modal ──
+
+function SplitUpdateModal({ expenseId, onClose, expenses, setExpenses, members, setMembers, showToast }) {
+  const expense = expenses.find(e => e.id === expenseId);
+  const newParticipants = ['julia', 'sarah'];
+  const newPer = expense ? Math.round(expense.amount / newParticipants.length) : 0;
+  const oldPer = expense ? Math.round(expense.amount / expense.participants.length) : 0;
+  const getMember = id => members.find(m => m.id === id);
+
+  const apply = () => {
+    setExpenses(prev => prev.map(e => e.id === expenseId
+      ? { ...e, participants: newParticipants, perPerson: newPer }
+      : e
+    ));
+    // Restore owes for people removed from split
+    const removed = expense.participants.filter(id => !newParticipants.includes(id) && id !== expense.payer);
+    setMembers(prev => prev.map(m => {
+      if (removed.includes(m.id)) return { ...m, owes: Math.max(0, m.owes - oldPer) };
+      return m;
+    }));
+    showToast('Split updated: Cafe Bloom → 2 people', 'success');
+    onClose();
+  };
+
+  if (!expense) return null;
+
+  return (
+    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="modal-box">
+        <button className="modal-close" onClick={onClose}>✕</button>
+        <div className="modal-title">Update Split</div>
+        <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 20 }}>
+          Taro detected: "Only Sarah and I joined" → Cafe Bloom
+        </div>
+        <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
+          <div style={{ flex: 1, background: '#FEF4E8', border: '1px solid var(--orange)', borderRadius: 8, padding: '12px 14px', opacity: 0.7 }}>
+            <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--orange)', marginBottom: 8 }}>Before</div>
+            <div style={{ fontSize: 13, fontWeight: 600 }}>{expense.participants.length} people</div>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>{fmt(oldPer)} each</div>
+            <div style={{ marginTop: 8, display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+              {expense.participants.map(id => (
+                <span key={id} style={{ fontSize: 11, background: 'white', border: '1px solid var(--border-light)', borderRadius: 4, padding: '2px 6px' }}>{getMember(id)?.name}</span>
+              ))}
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', fontSize: 18, color: 'var(--text-muted)' }}>→</div>
+          <div style={{ flex: 1, background: 'var(--green-bg)', border: '1px solid var(--green)', borderRadius: 8, padding: '12px 14px' }}>
+            <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--green)', marginBottom: 8 }}>After</div>
+            <div style={{ fontSize: 13, fontWeight: 600 }}>{newParticipants.length} people</div>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>{fmt(newPer)} each</div>
+            <div style={{ marginTop: 8, display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+              {newParticipants.map(id => (
+                <span key={id} style={{ fontSize: 11, background: 'white', border: '1px solid var(--green)', borderRadius: 4, padding: '2px 6px', color: 'var(--green)', fontWeight: 600 }}>{getMember(id)?.name}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div style={{ background: '#FAFAF8', border: '1.5px dashed var(--border)', borderRadius: 6, padding: '10px 14px', fontSize: 12, color: 'var(--text-muted)', marginBottom: 20 }}>
+          Alex, John, and Minho will be removed from this expense. Their owed amounts will be adjusted.
+        </div>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button className="btn btn-primary" style={{ flex: 1, justifyContent: 'center' }} onClick={apply}>Apply Update</button>
+          <button className="btn btn-ghost" onClick={onClose}>Cancel</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Add Manually Modal ──
+
+function AddManuallyModal({ onClose, expenses, setExpenses, members, setMembers, setTransactions, walletBalance, setWalletBalance, showToast }) {
+  const [desc, setDesc] = useState('');
+  const [amount, setAmount] = useState('');
+  const [group, setGroup] = useState('Jeju Trip');
+  const [participants, setParticipants] = useState(['julia']);
+  const [step, setStep] = useState('form'); // 'form' | 'done'
+  const others = members.filter(m => m.id !== 'julia');
+
+  const toggle = id => setParticipants(prev =>
+    prev.includes(id) ? prev.filter(p => p !== id) : [...prev, id]
+  );
+
+  const parsed = parseInt(amount.replace(/[^0-9]/g, '')) || 0;
+  const perPerson = participants.length > 0 ? Math.round(parsed / participants.length) : 0;
+
+  const add = () => {
+    if (!desc.trim()) { showToast('Enter a description'); return; }
+    if (!parsed || parsed <= 0) { showToast('Enter a valid amount'); return; }
+    if (participants.length === 0) { showToast('Select at least one person'); return; }
+
+    const newExp = {
+      id: `manual-${Date.now()}`,
+      merchant: desc.trim(),
+      amount: parsed,
+      category: 'Other',
+      payer: 'julia',
+      participants,
+      perPerson,
+      date: 'Just now',
+      status: 'pending',
+      icon: '✎',
+    };
+    setExpenses(prev => [newExp, ...prev]);
+    const nonPayers = participants.filter(p => p !== 'julia');
+    setMembers(prev => prev.map(m =>
+      nonPayers.includes(m.id) ? { ...m, owes: m.owes + perPerson } : m
+    ));
+    setWalletBalance(prev => prev - parsed);
+    setTransactions(prev => [{ id: Date.now(), desc: desc.trim(), amount: -parsed, type: 'out', date: 'Just now', icon: '✎' }, ...prev]);
+    setStep('done');
+  };
+
+  if (step === 'done') {
+    return (
+      <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+        <div className="modal-box">
+          <button className="modal-close" onClick={onClose}>✕</button>
+          <div style={{ textAlign: 'center', marginBottom: 20 }}>
+            <div style={{ fontSize: 32, marginBottom: 10 }}>✓</div>
+            <div className="modal-title" style={{ marginBottom: 4 }}>Expense Added</div>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{desc} · {fmt(parsed)}</div>
+          </div>
+          <div style={{ background: '#F5F5F3', border: '1.5px solid var(--border-light)', borderRadius: 8, padding: '12px 14px', marginBottom: 20 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+              <span style={{ fontWeight: 600 }}>{desc}</span>
+              <span className="amount" style={{ fontWeight: 700 }}>{fmt(parsed)}</span>
+            </div>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 6 }}>{group} · {participants.length} people · {fmt(perPerson)} each</div>
+            <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+              {participants.map(id => {
+                const m = members.find(mb => mb.id === id);
+                return <span key={id} style={{ fontSize: 11, background: 'white', border: '1px solid var(--border-light)', borderRadius: 4, padding: '2px 6px' }}>{m?.name}</span>;
+              })}
+            </div>
+          </div>
+          <button className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }} onClick={onClose}>Done</button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="modal-box">
+        <button className="modal-close" onClick={onClose}>✕</button>
+        <div className="modal-title">Add Expense</div>
+
+        <div style={{ marginBottom: 14 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: 6 }}>Description</div>
+          <input className="input" placeholder="e.g. Dinner at Black Pork" value={desc} onChange={e => setDesc(e.target.value)} />
+        </div>
+
+        <div style={{ marginBottom: 14 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: 6 }}>Amount (₩)</div>
+          <input className="input" placeholder="e.g. 50000" value={amount} onChange={e => setAmount(e.target.value)} inputMode="numeric" />
+        </div>
+
+        <div style={{ marginBottom: 14 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: 6 }}>Group</div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            {['Jeju Trip', 'Cafe Outing'].map(g => (
+              <button key={g} className={`tone-btn${group === g ? ' active' : ''}`} onClick={() => setGroup(g)}>{g}</button>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ marginBottom: 20 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: 8 }}>Split with</div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <div style={{ padding: '6px 12px', border: '2px solid var(--border)', borderRadius: 6, fontSize: 12, fontWeight: 600, background: '#F0F0EE', cursor: 'default' }}>
+              Julia (you) ✓
+            </div>
+            {others.map(m => (
+              <button key={m.id} onClick={() => toggle(m.id)}
+                style={{ padding: '6px 12px', border: `2px solid ${participants.includes(m.id) ? 'var(--border)' : 'var(--border-light)'}`, borderRadius: 6, fontSize: 12, fontWeight: participants.includes(m.id) ? 600 : 400, background: participants.includes(m.id) ? 'var(--text)' : 'white', color: participants.includes(m.id) ? 'white' : 'var(--text)', cursor: 'pointer', transition: 'all 0.1s' }}>
+                {m.name}{participants.includes(m.id) ? ' ✓' : ''}
+              </button>
+            ))}
+          </div>
+          {parsed > 0 && participants.length > 0 && (
+            <div style={{ marginTop: 10, fontSize: 13, color: 'var(--text-muted)', background: '#F5F5F3', borderRadius: 6, padding: '8px 12px' }}>
+              {fmt(perPerson)} per person · {participants.length} {participants.length === 1 ? 'person' : 'people'}
+            </div>
+          )}
+        </div>
+
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button className="btn btn-primary" style={{ flex: 1, justifyContent: 'center' }} onClick={add}>Add Expense</button>
+          <button className="btn btn-ghost" onClick={onClose}>Cancel</button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function TopUpModal({ onClose, walletBalance, setWalletBalance, setTransactions, showToast }) {
   const [selected, setSelected] = useState(null);
