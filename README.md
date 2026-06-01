@@ -16,7 +16,7 @@ Across cultures, people have everyday words for splitting costs: 따로따로(tt
 - **GitHub Repository:** [github.com/juliairsalina/ttaro-ttaro](https://github.com/juliairsalina/ttaro-ttaro)
 - **5-Minute Video Explanation:** [Watch on YouTube](https://youtu.be/huNeX1EKiKU?si=bORPLC8QI2a_fEj6)
 - **1-Page Project Overview (PDF):** [View PDF](https://github.com/juliairsalina/ttaro-ttaro/blob/main/1-page.pdf)
-- 
+
 ---
 
 ## Why This Problem?
