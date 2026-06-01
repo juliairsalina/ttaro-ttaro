@@ -1,15 +1,22 @@
 # 따로따로 · ttaro-ttaro — Split Bill AI Agent
 
+![Web Preview](preview.png)
+
 > **따로따로** (romanized: *ttaro-ttaro*) means “separately” in Korean — the idea that everyone’s share is tracked precisely, separately, and fairly.
 
 Across cultures, people have everyday words for splitting costs: 따로따로(ttaro-ttaro), 別々 / べつべつ (betsu-betsu), half-half, asing-asing, ครึ่ง-ครึ่ง (khrueng-khrueng), AA制 (AA zhì), and பாதி பாதி (paadhi paadhi). This shows that sharing expenses is universal, but the experience is still often awkward and manual.
 
 따로따로 is an AI agent that acts as a group treasurer that detects, splits, explains, reminds, and settles shared expenses between friends, especially during trips, meals, outings, and temporary group activities with human approval (human-in-the-loop).
 
-Check out the [Live Web Prototype](https://ttaro-ttaro.vercel.app/).
+---
 
-![Web Preview](preview.png)
+## Prototype
 
+- **Vercel Deployment:** [ttaro-ttaro.vercel.app](https://ttaro-ttaro.vercel.app)
+- **GitHub Repository:** [github.com/juliairsalina/ttaro-ttaro](https://github.com/juliairsalina/ttaro-ttaro)
+- **5-Minute Video Explanation:** [Watch on YouTube](https://youtu.be/huNeX1EKiKU?si=bORPLC8QI2a_fEj6)
+- **1-Page Project Overview (PDF):** [View PDF](https://github.com/juliairsalina/ttaro-ttaro/blob/main/1-page.pdf)
+- 
 ---
 
 ## Why This Problem?
